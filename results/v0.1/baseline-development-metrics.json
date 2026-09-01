@@ -1,0 +1,32 @@
+{
+  "experiment_name": "baseline development experiment",
+  "dataset_version": "v0.1",
+  "dataset_split": "DEVELOPMENT",
+  "policy_name": "baseline_static_v0.1",
+  "total_cases": 10,
+  "legitimate_cases": 7,
+  "fraudulent_cases": 3,
+  "approved": 3,
+  "human_review": 5,
+  "stopped": 2,
+  "automatic_decisions": 5,
+  "correct_automatic_decisions": 4,
+  "false_approvals": 1,
+  "false_stops": 0,
+  "automatic_coverage": 0.5,
+  "automatic_accuracy": 0.8,
+  "human_review_rate": 0.5,
+  "fraud_recall": 0.6667,
+  "legitimate_review_rate": 0.7143,
+  "thresholds": {
+    "approve_maximum_score": 1,
+    "human_review_maximum_score": 3,
+    "stop_minimum_score": 4,
+    "maximum_risk_score": 6
+  },
+  "notes": [
+    "Automatic accuracy uses only APPROVE and STOP decisions.",
+    "HUMAN_REVIEW decisions are treated as deferred.",
+    "These are development results and not final evaluation results."
+  ]
+}
