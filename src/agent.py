@@ -426,3 +426,266 @@ class BaselineAgent:
                 f"Invalid {field_name} value: {value!r}. "
                 f"Allowed values: {sorted(allowed_values)}"
             )
+
+
+# Policy 1 keeps the baseline's initial score so that the comparison changes
+# only one capability: selective access to a single step-up verification.
+POLICY_1_NAME = "policy1_step_up_v0.1"
+POLICY_1_REQUEST_MINIMUM_SCORE = 2
+POLICY_1_REQUEST_MAXIMUM_SCORE = 3
+POLICY_1_MAXIMUM_VERIFICATION_REQUESTS = 1
+
+VERIFICATION_SCORE_ADJUSTMENTS = {
+    "PASS": -1,
+    "FAIL": 1,
+    "INCONCLUSIVE": 0,
+    "UNAVAILABLE": 0,
+}
+
+
+@dataclass(frozen=True)
+class Policy1InitialDecision:
+    """
+    Store Policy 1's decision before additional evidence is revealed.
+
+    The object contains the baseline-derived evidence points and initial score,
+    plus the action selected at the first decision point.  A score of two or
+    three produces GET_MORE_EVIDENCE.  Low- and high-risk scores are terminal
+    immediately and therefore do not receive the hidden verification result.
+    """
+
+    policy_name: str
+    amount_points: int
+    device_location_points: int
+    velocity_points: int
+    initial_risk_score: int
+    initial_action: str
+    verification_requested: bool
+    reason: str
+
+
+@dataclass(frozen=True)
+class Policy1Decision:
+    """
+    Store the complete and auditable result of one Policy 1 decision.
+
+    Attributes record both decision stages.  ``verification_result_observed``
+    is NOT_REQUESTED for terminal initial actions.  For uncertain cases it is
+    PASS, FAIL, INCONCLUSIVE, or UNAVAILABLE.  The final action is always
+    APPROVE, HUMAN_REVIEW, or STOP; Policy 1 cannot request a second check.
+    """
+
+    policy_name: str
+    amount_points: int
+    device_location_points: int
+    velocity_points: int
+    initial_risk_score: int
+    initial_action: str
+    verification_requested: bool
+    verification_result_observed: str
+    verification_score_adjustment: int
+    final_risk_score: int
+    final_action: str
+    predicted_state: Optional[str]
+    reason: str
+
+
+class Policy1Agent:
+    """
+    Add one selective step-up verification to the frozen baseline score.
+
+    Input:
+        The first stage receives exactly the same three initial evidence fields
+        as the baseline.  The second stage receives a verification result only
+        when the first stage returned GET_MORE_EVIDENCE.
+
+    Output:
+        ``decide_initial`` returns ``Policy1InitialDecision``.
+        ``finalize`` returns ``Policy1Decision`` with a terminal action.
+
+    What happens inside:
+        1. Reuse the frozen baseline calculation to obtain an initial score.
+        2. Approve scores zero to one without requesting verification.
+        3. Request verification for scores two to three.
+        4. Stop scores four to six without requesting verification.
+        5. When verification was requested, adjust the score by one point for
+           PASS or FAIL, and by zero for INCONCLUSIVE or UNAVAILABLE.
+        6. Apply the original baseline terminal thresholds to the updated score.
+
+    Important limitation:
+        The verification adjustments are transparent simulation assumptions.
+        They are not calibrated probabilities.  PASS and FAIL are deliberately
+        not treated as proof of legitimacy or fraud.
+    """
+
+    def __init__(self) -> None:
+        """Create Policy 1 with a private frozen-baseline score calculator."""
+
+        self._baseline = BaselineAgent()
+
+    def decide_initial(
+        self,
+        evidence: Mapping[str, str],
+    ) -> Policy1InitialDecision:
+        """
+        Select Policy 1's first action from the three initial evidence fields.
+
+        Input:
+            ``evidence`` must contain exactly amount_deviation,
+            device_location_context, and recent_velocity.  Hidden labels,
+            narratives, and verification results are rejected by the baseline
+            validation reused here.
+
+        Returns:
+            ``Policy1InitialDecision`` containing point contributions, initial
+            score, the first action, and whether verification was requested.
+
+        What happens inside:
+            The frozen baseline calculates the score.  Policy 1 changes only
+            the middle action: scores two and three request more evidence
+            instead of immediately going to a human.
+        """
+
+        baseline_decision = self._baseline.decide(evidence)
+        initial_score = baseline_decision.risk_score
+
+        if initial_score <= APPROVE_MAXIMUM_SCORE:
+            initial_action = "APPROVE"
+            verification_requested = False
+        elif initial_score <= POLICY_1_REQUEST_MAXIMUM_SCORE:
+            initial_action = "GET_MORE_EVIDENCE"
+            verification_requested = True
+        else:
+            initial_action = "STOP"
+            verification_requested = False
+
+        reason = (
+            f"The frozen baseline evidence score was {initial_score}. "
+            f"Policy 1 selected {initial_action}. "
+            f"Verification requested: {verification_requested}."
+        )
+
+        return Policy1InitialDecision(
+            policy_name=POLICY_1_NAME,
+            amount_points=baseline_decision.amount_points,
+            device_location_points=(
+                baseline_decision.device_location_points
+            ),
+            velocity_points=baseline_decision.velocity_points,
+            initial_risk_score=initial_score,
+            initial_action=initial_action,
+            verification_requested=verification_requested,
+            reason=reason,
+        )
+
+    def finalize(
+        self,
+        initial_decision: Policy1InitialDecision,
+        verification_result: Optional[str] = None,
+    ) -> Policy1Decision:
+        """
+        Finish the decision, revealing verification only when it was requested.
+
+        Input:
+            ``initial_decision`` is returned by ``decide_initial``.
+            ``verification_result`` must be supplied only for an initial
+            GET_MORE_EVIDENCE action.  Its allowed values are PASS, FAIL,
+            INCONCLUSIVE, and UNAVAILABLE.
+
+        Returns:
+            ``Policy1Decision`` containing both stages, the observed additional
+            evidence, score adjustment, final score, and terminal action.
+
+        What happens inside:
+            Terminal initial actions keep their score and are marked
+            NOT_REQUESTED.  An uncertain case validates and applies its
+            verification adjustment.  The adjusted score is kept between zero
+            and six, then converted to a terminal action using the frozen
+            baseline thresholds.
+
+        Raises:
+            ValueError if verification is missing when requested, supplied when
+            not requested, invalid, or if the initial object is inconsistent.
+        """
+
+        if initial_decision.policy_name != POLICY_1_NAME:
+            raise ValueError(
+                "Policy 1 can finalize only its own initial decisions."
+            )
+
+        if initial_decision.verification_requested:
+            if initial_decision.initial_action != "GET_MORE_EVIDENCE":
+                raise ValueError(
+                    "A verification request must follow GET_MORE_EVIDENCE."
+                )
+            if verification_result is None:
+                raise ValueError(
+                    "A verification result is required after "
+                    "GET_MORE_EVIDENCE."
+                )
+
+            observed_result = verification_result.strip().upper()
+            if observed_result not in VERIFICATION_SCORE_ADJUSTMENTS:
+                raise ValueError(
+                    f"Invalid verification result: {observed_result!r}. "
+                    "Allowed values: "
+                    f"{sorted(VERIFICATION_SCORE_ADJUSTMENTS)}"
+                )
+
+            adjustment = VERIFICATION_SCORE_ADJUSTMENTS[observed_result]
+            final_score = max(
+                0,
+                min(
+                    MAXIMUM_RISK_SCORE,
+                    initial_decision.initial_risk_score + adjustment,
+                ),
+            )
+            final_action, predicted_state = score_to_action(final_score)
+        else:
+            if verification_result is not None:
+                raise ValueError(
+                    "Verification evidence cannot be supplied when Policy 1 "
+                    "did not request it."
+                )
+
+            observed_result = "NOT_REQUESTED"
+            adjustment = 0
+            final_score = initial_decision.initial_risk_score
+
+            if initial_decision.initial_action == "APPROVE":
+                final_action = "APPROVE"
+                predicted_state = "LEGITIMATE"
+            elif initial_decision.initial_action == "STOP":
+                final_action = "STOP"
+                predicted_state = "FRAUDULENT"
+            else:
+                raise ValueError(
+                    "A non-terminal initial action must request verification."
+                )
+
+        reason = (
+            f"Initial score {initial_decision.initial_risk_score} produced "
+            f"{initial_decision.initial_action}. Verification result: "
+            f"{observed_result}. Score adjustment: {adjustment:+d}. "
+            f"Final score: {final_score}. Final action: {final_action}."
+        )
+
+        return Policy1Decision(
+            policy_name=POLICY_1_NAME,
+            amount_points=initial_decision.amount_points,
+            device_location_points=(
+                initial_decision.device_location_points
+            ),
+            velocity_points=initial_decision.velocity_points,
+            initial_risk_score=initial_decision.initial_risk_score,
+            initial_action=initial_decision.initial_action,
+            verification_requested=(
+                initial_decision.verification_requested
+            ),
+            verification_result_observed=observed_result,
+            verification_score_adjustment=adjustment,
+            final_risk_score=final_score,
+            final_action=final_action,
+            predicted_state=predicted_state,
+            reason=reason,
+        )

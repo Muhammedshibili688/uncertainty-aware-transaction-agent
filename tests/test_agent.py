@@ -43,6 +43,10 @@ from agent import (  # noqa: E402
     BaselineDecision,
     MAXIMUM_RISK_SCORE,
     POLICY_NAME,
+    POLICY_1_NAME,
+    Policy1Agent,
+    Policy1Decision,
+    Policy1InitialDecision,
     score_to_action,
 )
 
@@ -657,6 +661,273 @@ class TestBaselineAgent(unittest.TestCase):
             "selected action was STOP",
             decision.reason,
         )
+
+
+class TestPolicy1Agent(unittest.TestCase):
+    """Test Policy 1's selective, single-verification decision sequence."""
+
+    def setUp(self) -> None:
+        """Create a new Policy 1 agent for every unit test."""
+
+        self.agent = Policy1Agent()
+
+    @staticmethod
+    def evidence_for_score(
+        amount: str,
+        context: str,
+        velocity: str,
+    ) -> dict[str, str]:
+        """Return an initial-evidence dictionary for a chosen test pattern."""
+
+        return {
+            "amount_deviation": amount,
+            "device_location_context": context,
+            "recent_velocity": velocity,
+        }
+
+    def test_low_score_is_terminal_without_verification(self) -> None:
+        """Score zero must approve without exposing step-up evidence."""
+
+        evidence = self.evidence_for_score(
+            "NORMAL",
+            "KNOWN_DEVICE_USUAL_LOCATION",
+            "NORMAL",
+        )
+
+        initial = self.agent.decide_initial(evidence)
+        final = self.agent.finalize(initial)
+
+        self.assertIsInstance(initial, Policy1InitialDecision)
+        self.assertIsInstance(final, Policy1Decision)
+        self.assertEqual(initial.policy_name, POLICY_1_NAME)
+        self.assertEqual(initial.initial_action, "APPROVE")
+        self.assertFalse(initial.verification_requested)
+        self.assertEqual(
+            final.verification_result_observed,
+            "NOT_REQUESTED",
+        )
+        self.assertEqual(final.final_action, "APPROVE")
+        self.assertEqual(final.predicted_state, "LEGITIMATE")
+
+    def test_score_two_requests_verification(self) -> None:
+        """The lower uncertain boundary must request the one extra check."""
+
+        evidence = self.evidence_for_score(
+            "HIGH",
+            "KNOWN_DEVICE_USUAL_LOCATION",
+            "NORMAL",
+        )
+
+        initial = self.agent.decide_initial(evidence)
+
+        self.assertEqual(initial.initial_risk_score, 2)
+        self.assertEqual(initial.initial_action, "GET_MORE_EVIDENCE")
+        self.assertTrue(initial.verification_requested)
+
+    def test_score_three_requests_verification(self) -> None:
+        """The upper uncertain boundary must request the one extra check."""
+
+        evidence = self.evidence_for_score(
+            "HIGH",
+            "KNOWN_DEVICE_UNUSUAL_LOCATION",
+            "NORMAL",
+        )
+
+        initial = self.agent.decide_initial(evidence)
+
+        self.assertEqual(initial.initial_risk_score, 3)
+        self.assertEqual(initial.initial_action, "GET_MORE_EVIDENCE")
+        self.assertTrue(initial.verification_requested)
+
+    def test_high_score_is_terminal_without_verification(self) -> None:
+        """Score four must stop without exposing unnecessary evidence."""
+
+        evidence = self.evidence_for_score(
+            "HIGH",
+            "NEW_DEVICE_UNUSUAL_LOCATION",
+            "NORMAL",
+        )
+
+        initial = self.agent.decide_initial(evidence)
+        final = self.agent.finalize(initial)
+
+        self.assertEqual(initial.initial_risk_score, 4)
+        self.assertEqual(initial.initial_action, "STOP")
+        self.assertFalse(initial.verification_requested)
+        self.assertEqual(
+            final.verification_result_observed,
+            "NOT_REQUESTED",
+        )
+        self.assertEqual(final.final_action, "STOP")
+        self.assertEqual(final.predicted_state, "FRAUDULENT")
+
+    def test_pass_subtracts_one_point(self) -> None:
+        """PASS must reduce score two to one without proving legitimacy."""
+
+        evidence = self.evidence_for_score(
+            "HIGH",
+            "KNOWN_DEVICE_USUAL_LOCATION",
+            "NORMAL",
+        )
+
+        initial = self.agent.decide_initial(evidence)
+        final = self.agent.finalize(initial, "PASS")
+
+        self.assertEqual(final.verification_score_adjustment, -1)
+        self.assertEqual(final.final_risk_score, 1)
+        self.assertEqual(final.final_action, "APPROVE")
+        self.assertEqual(final.predicted_state, "LEGITIMATE")
+
+    def test_pass_does_not_automatically_approve_score_three(self) -> None:
+        """PASS lowers score three to two, which still needs human review."""
+
+        evidence = self.evidence_for_score(
+            "HIGH",
+            "KNOWN_DEVICE_UNUSUAL_LOCATION",
+            "NORMAL",
+        )
+
+        initial = self.agent.decide_initial(evidence)
+        final = self.agent.finalize(initial, "PASS")
+
+        self.assertEqual(final.final_risk_score, 2)
+        self.assertEqual(final.final_action, "HUMAN_REVIEW")
+        self.assertIsNone(final.predicted_state)
+
+    def test_fail_adds_one_point(self) -> None:
+        """FAIL must increase score three to four and produce STOP."""
+
+        evidence = self.evidence_for_score(
+            "HIGH",
+            "KNOWN_DEVICE_UNUSUAL_LOCATION",
+            "NORMAL",
+        )
+
+        initial = self.agent.decide_initial(evidence)
+        final = self.agent.finalize(initial, "FAIL")
+
+        self.assertEqual(final.verification_score_adjustment, 1)
+        self.assertEqual(final.final_risk_score, 4)
+        self.assertEqual(final.final_action, "STOP")
+        self.assertEqual(final.predicted_state, "FRAUDULENT")
+
+    def test_inconclusive_and_unavailable_leave_score_unchanged(self) -> None:
+        """Non-resolving outcomes must keep an uncertain case in review."""
+
+        evidence = self.evidence_for_score(
+            "HIGH",
+            "KNOWN_DEVICE_USUAL_LOCATION",
+            "NORMAL",
+        )
+        initial = self.agent.decide_initial(evidence)
+
+        for result in ("INCONCLUSIVE", "UNAVAILABLE"):
+            with self.subTest(result=result):
+                final = self.agent.finalize(initial, result)
+                self.assertEqual(final.verification_score_adjustment, 0)
+                self.assertEqual(final.final_risk_score, 2)
+                self.assertEqual(final.final_action, "HUMAN_REVIEW")
+                self.assertIsNone(final.predicted_state)
+
+    def test_requested_verification_result_is_required(self) -> None:
+        """An initial evidence request cannot be finalized with no result."""
+
+        evidence = self.evidence_for_score(
+            "HIGH",
+            "KNOWN_DEVICE_USUAL_LOCATION",
+            "NORMAL",
+        )
+        initial = self.agent.decide_initial(evidence)
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "verification result is required",
+        ):
+            self.agent.finalize(initial)
+
+    def test_unrequested_verification_is_rejected(self) -> None:
+        """A terminal low-risk case must not receive hidden step-up evidence."""
+
+        evidence = self.evidence_for_score(
+            "NORMAL",
+            "KNOWN_DEVICE_USUAL_LOCATION",
+            "NORMAL",
+        )
+        initial = self.agent.decide_initial(evidence)
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "cannot be supplied",
+        ):
+            self.agent.finalize(initial, "PASS")
+
+    def test_invalid_verification_result_is_rejected(self) -> None:
+        """Only the four frozen observed verification values are accepted."""
+
+        evidence = self.evidence_for_score(
+            "HIGH",
+            "KNOWN_DEVICE_USUAL_LOCATION",
+            "NORMAL",
+        )
+        initial = self.agent.decide_initial(evidence)
+
+        with self.assertRaisesRegex(
+            ValueError,
+            "Invalid verification result",
+        ):
+            self.agent.finalize(initial, "SUCCESS")
+
+    def test_hidden_true_state_is_rejected_at_initial_stage(self) -> None:
+        """Policy 1 must retain the baseline's hidden-label leakage guard."""
+
+        evidence = self.evidence_for_score(
+            "NORMAL",
+            "KNOWN_DEVICE_USUAL_LOCATION",
+            "NORMAL",
+        )
+        evidence["true_state"] = "FRAUDULENT"
+
+        with self.assertRaisesRegex(ValueError, "not allowed to see"):
+            self.agent.decide_initial(evidence)
+
+    def test_every_verification_outcome_is_terminal(self) -> None:
+        """Policy 1 must never request a second verification."""
+
+        evidence = self.evidence_for_score(
+            "HIGH",
+            "KNOWN_DEVICE_USUAL_LOCATION",
+            "NORMAL",
+        )
+        initial = self.agent.decide_initial(evidence)
+
+        for result in ("PASS", "FAIL", "INCONCLUSIVE", "UNAVAILABLE"):
+            with self.subTest(result=result):
+                final = self.agent.finalize(initial, result)
+                self.assertIn(
+                    final.final_action,
+                    {"APPROVE", "HUMAN_REVIEW", "STOP"},
+                )
+                self.assertNotEqual(
+                    final.final_action,
+                    "GET_MORE_EVIDENCE",
+                )
+
+    def test_policy_1_is_deterministic(self) -> None:
+        """Identical initial and verification evidence must repeat exactly."""
+
+        evidence = self.evidence_for_score(
+            "MODERATE",
+            "NEW_DEVICE_USUAL_LOCATION",
+            "NORMAL",
+        )
+
+        first_initial = self.agent.decide_initial(evidence)
+        first_final = self.agent.finalize(first_initial, "PASS")
+        second_initial = self.agent.decide_initial(evidence)
+        second_final = self.agent.finalize(second_initial, "PASS")
+
+        self.assertEqual(first_initial, second_initial)
+        self.assertEqual(first_final, second_final)
 
 
 if __name__ == "__main__":

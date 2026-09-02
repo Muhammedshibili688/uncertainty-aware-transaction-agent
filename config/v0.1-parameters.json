@@ -1,0 +1,41 @@
+{
+  "dataset_version": "v0.1",
+  "parameter_status": "FROZEN_POLICY_1_PARAMETERS",
+  "baseline": {
+    "policy_name": "baseline_static_v0.1",
+    "score_range": {
+      "minimum": 0,
+      "maximum": 6
+    },
+    "action_thresholds": {
+      "approve_maximum_score": 1,
+      "human_review_minimum_score": 2,
+      "human_review_maximum_score": 3,
+      "stop_minimum_score": 4
+    }
+  },
+  "policy_1": {
+    "policy_name": "policy1_step_up_v0.1",
+    "purpose": "Use one step-up verification to try to resolve score-two and score-three cases before human review.",
+    "initial_action_thresholds": {
+      "approve_maximum_score": 1,
+      "get_more_evidence_minimum_score": 2,
+      "get_more_evidence_maximum_score": 3,
+      "stop_minimum_score": 4
+    },
+    "verification_score_adjustments": {
+      "PASS": -1,
+      "FAIL": 1,
+      "INCONCLUSIVE": 0,
+      "UNAVAILABLE": 0
+    },
+    "post_verification_action_thresholds": {
+      "approve_maximum_score": 1,
+      "human_review_minimum_score": 2,
+      "human_review_maximum_score": 3,
+      "stop_minimum_score": 4
+    },
+    "maximum_verification_requests": 1,
+    "assumption_note": "The point changes are transparent simulation assumptions, not calibrated fraud probabilities or banking standards. PASS and FAIL change risk by one point because neither result proves the hidden state."
+  }
+}
