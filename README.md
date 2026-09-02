@@ -59,21 +59,37 @@ when the true transaction state is unknown and new evidence becomes available.
 
 ## Current Status
 
+## Current Status
+
 - [x] Problem selected
 - [x] Initial objective defined
-- [ ] Research completed
-- [ ] Reddit discussions completed
-- [ ] X discussions completed
-- [ ] Probability model designed
-- [ ] Agent/simulation implemented
-- [ ] Test cases prepared
-- [ ] Policies compared
-- [ ] Failure analysis completed
+- [x] Initial research completed
+- [x] Public discussions recorded
+- [x] v0.1 agent specification frozen
+- [x] Forty simulated cases prepared
+- [x] Development and evaluation splits created
+- [x] Static multi-signal baseline implemented
+- [ ] Baseline unit tests implemented and passing
+- [x] Baseline development experiment completed
+- [x] Baseline findings recorded
+- [ ] Policy 1 implemented
+- [ ] Policy 1 development experiment completed
+- [ ] Policy 2 implemented
+- [ ] Final evaluation completed
+- [ ] Five final failures analysed
+- [ ] Probability decision record completed
+- [ ] Three AI reviews completed
 - [ ] Preprint completed
 - [ ] Work published
 
 ## Project Status
 
-This project is currently in the research and problem-formulation stage.
-Probabilities, thresholds, costs, and experimental results have not yet been
-finalized.
+The frozen v0.1 dataset and static baseline are complete. The baseline
+was tested on ten development cases. It made five automatic decisions,
+sent five cases to human review, produced one false approval, and
+produced no false stops.
+
+The next stage is Policy 1, which will test whether one step-up
+verification can reduce unnecessary human reviews without increasing
+costly automatic errors. The thirty evaluation cases remain reserved
+for comparison after the baseline, Policy 1, and Policy 2 are frozen.
