@@ -1,0 +1,29 @@
+{
+  "experiment_name": "policy 1 held-out evaluation",
+  "dataset_version": "v0.1",
+  "dataset_split": "EVALUATION",
+  "policy_name": "policy1_step_up_v0.1",
+  "total_cases": 30,
+  "legitimate_cases": 15,
+  "fraudulent_cases": 15,
+  "approved": 14,
+  "human_review": 6,
+  "stopped": 10,
+  "verification_requests": 10,
+  "automatic_decisions": 24,
+  "correct_automatic_decisions": 20,
+  "false_approvals": 4,
+  "false_stops": 0,
+  "automatic_coverage": 0.8,
+  "automatic_accuracy": 0.8333,
+  "human_review_rate": 0.2,
+  "verification_request_rate": 0.3333,
+  "fraud_recall": 0.6667,
+  "legitimate_review_rate": 0.3333,
+  "notes": [
+    "Automatic accuracy uses only APPROVE and STOP decisions.",
+    "HUMAN_REVIEW is recorded as deferred.",
+    "These are held-out v0.1 evaluation results.",
+    "Policy 1 adjustments are risk points, not probabilities."
+  ]
+}
