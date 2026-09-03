@@ -1,0 +1,40 @@
+{
+  "experiment_name": "baseline v0.2 held-out evaluation",
+  "dataset_version": "v0.2",
+  "dataset_split": "EVALUATION",
+  "policy_name": "baseline_static_v0.1",
+  "total_cases": 30,
+  "legitimate_cases": 15,
+  "fraudulent_cases": 15,
+  "approved": 7,
+  "human_review": 19,
+  "stopped": 4,
+  "verification_requests": 0,
+  "automatic_decisions": 11,
+  "correct_automatic_decisions": 8,
+  "false_approvals": 3,
+  "false_stops": 0,
+  "automatic_coverage": 0.3667,
+  "automatic_accuracy": 0.7273,
+  "human_review_rate": 0.6333,
+  "verification_request_rate": 0.0,
+  "fraud_recall": 0.2667,
+  "action_by_true_state": {
+    "LEGITIMATE": {
+      "APPROVE": 4,
+      "HUMAN_REVIEW": 11,
+      "STOP": 0
+    },
+    "FRAUDULENT": {
+      "APPROVE": 3,
+      "HUMAN_REVIEW": 8,
+      "STOP": 4
+    }
+  },
+  "notes": [
+    "Automatic accuracy excludes HUMAN_REVIEW.",
+    "HUMAN_REVIEW is deferred.",
+    "Risk updates are points rather than probabilities.",
+    "These are one-time held-out v0.2 results."
+  ]
+}

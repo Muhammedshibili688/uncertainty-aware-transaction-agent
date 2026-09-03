@@ -1,0 +1,32 @@
+{
+  "record_name": "policy2_v0.2_one_time_held_out_evaluation",
+  "evaluation_date": "2026-09-03",
+  "status": "COMPLETED_DO_NOT_RERUN_AS_UNSEEN",
+  "tests_passed_before_evaluation": 71,
+  "evaluation_cases": 30,
+  "conclusion": "POLICY_2_NOT_BETTER_FOR_FROZEN_OBJECTIVE",
+  "reason": "Policy 2 had four false approvals while the frozen baseline had three, so the false-approval safety gate failed.",
+  "pre_evaluation_freeze": {
+    "path": "results/v0.2/policy2-pre-evaluation-freeze.json",
+    "sha256": "2a0737793d794c74d3268f78cb74af90b2cedff4130b948f45a3eafd917a6f60"
+  },
+  "evaluation_runner": {
+    "path": "src/run_policy2_evaluation.py",
+    "sha256": "16aba5f8ace11d7f51b326d86f7ce4c2f56758e36338a55b42ad28221153fc1b"
+  },
+  "evaluation_input": {
+    "path": "data/cases-evaluation-v0.2.csv",
+    "sha256": "90919d00510daf6b70511c0c0b20eb3af27f35de5a622b4f5ec0bc6f38ef57d4"
+  },
+  "artifacts": {
+    "results/v0.2/baseline-evaluation-decisions.csv": "24436b7ea4401fbeb25cfdd4ab78cf8117b321ba7caf569936304fc428bb3c88",
+    "results/v0.2/baseline-evaluation-metrics.json": "94825f77b8baceee542674d6bc6c9483afe699a342222790b6ed6974046c33f1",
+    "results/v0.2/policy1-evaluation-decisions.csv": "8fdac467a32ced05fe9881d60e13b5ccf64baa150745f83d839f9a137f12352b",
+    "results/v0.2/policy1-evaluation-metrics.json": "1a6d71f5d42e5bd5dbeb0614800c21c4d8e5f33cd5c656601669ac99fd9040f8",
+    "results/v0.2/policy2-evaluation-decisions.csv": "bc324c6f0349e3043879d755bd336ae9846171913417676675550c31c5f9c5be",
+    "results/v0.2/policy2-evaluation-metrics.json": "2a0f454c06044f9c9241c953ed183dd6a28179d5cc46052756d16e0fc5423c22",
+    "results/v0.2/policy-comparison-evaluation.json": "106968810c3bde9952ccd2786e6dba7668ff03714ff3e3c0b67fd368155c182d",
+    "results/v0.2/baseline-vs-policy1-vs-policy2-evaluation-summary.md": "37c0922380aafa257f49ea857fe25a1c5e2987009543b263d9439e54d8175e77"
+  },
+  "reuse_rule": "These thirty cases are now seen evidence. A changed policy requires a new version and newly reserved evaluation cases."
+}

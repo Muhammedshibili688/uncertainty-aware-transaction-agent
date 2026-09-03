@@ -292,3 +292,146 @@ This is a valid negative result. Policy 1 must not be changed and retested on
 these same thirty cases as though they were still held out. Any later Policy 2
 must be presented as a new design motivated by this failure and evaluated on
 new unseen evidence.
+
+## Decision: Policy 2 verification-reliability rule
+
+### Evidence motivating the change
+
+Policy 1's held-out failure had two causes. First, fraudulent CASE-030 moved
+from HUMAN_REVIEW to APPROVE because a same-environment PASS always subtracted
+one point. Second, other familiar-context frauds already had score zero or one
+and requested no evidence. Policy 2 addresses the first cause only. It records
+the second as a missing-evidence limitation rather than pretending a threshold
+change can recover unavailable information.
+
+### Frozen hypothesis
+
+Policy 2 should reduce misleading-PASS approvals if FAIL remains warning
+evidence but PASS lowers risk only when the result comes from an independent
+channel.
+
+### Frozen change
+
+The initial evidence, point mappings, score range, request region and terminal
+thresholds remain unchanged. Policy 2 adds
+`verification_independence_if_requested` with three values:
+
+- INDEPENDENT;
+- SAME_CHANNEL;
+- UNKNOWN.
+
+Independent PASS subtracts one point. SAME_CHANNEL or UNKNOWN PASS changes
+nothing. FAIL adds one point. INCONCLUSIVE and UNAVAILABLE change nothing. The
+agent may request the two additional values only once and only at initial score
+two or three.
+
+## Result: Policy 2 v0.2 development experiment
+
+### Run boundary
+
+Forty new v0.2 cases were prepared before implementation and split
+reproducibly into ten DEVELOPMENT and thirty EVALUATION cases. The full suite
+of sixty-three tests passed before the development runner was executed. Only
+the ten development cases were processed. The thirty evaluation cases were not
+passed to any policy.
+
+### Development comparison
+
+| Metric | Baseline | Policy 1 | Policy 2 |
+|---|---:|---:|---:|
+| Approved | 2 | 6 | 4 |
+| Human review | 7 | 2 | 4 |
+| Stopped | 1 | 2 | 2 |
+| Verification requests | 0 | 7 | 7 |
+| False approvals | 1 | 2 | 1 |
+| False stops | 0 | 0 | 0 |
+| Automatic coverage | 30.0% | 80.0% | 60.0% |
+| Automatic accuracy | 66.7% | 75.0% | 83.3% |
+| Fraud recall | 25.0% | 50.0% | 50.0% |
+
+### What changed
+
+Fraudulent P2-002 received a SAME_CHANNEL PASS. Policy 1 would have reduced its
+score from two to one and approved it. Policy 2 left the score at two and sent
+the case to human review. Legitimate P2-003 received the same conservative
+treatment, showing the cost of the safer rule.
+
+Independent PASS still resolved legitimate P2-001 and P2-010. FAIL moved
+fraudulent P2-004 from score three to score four and STOP. Fraudulent P2-009
+remained a false approval at score one because no initial evidence indicated a
+problem.
+
+### Development conclusion and freeze
+
+Policy 2 met all nine frozen development criteria. It produced fewer false
+approvals than Policy 1, no more false approvals or false stops than the
+baseline, and fewer human reviews than the baseline. SAME_CHANNEL and UNKNOWN
+PASS never lowered risk, while independent PASS still resolved legitimate
+score-two cases.
+
+Policy 2 is now frozen after development. These results support testing the
+hypothesis but do not establish held-out performance. The thirty v0.2
+evaluation cases remain reserved and must not be executed until a separate
+evaluation decision is made.
+
+## Result: Policy 2 v0.2 held-out evaluation
+
+### Run boundary
+
+The three corrected master rows were regenerated into the fixed 10/30 split.
+The development metrics remained unchanged. Policy 2 then passed all seventy-one
+tests, and the pre-evaluation SHA-256 manifest confirmed that its code,
+parameters, hypothesis, specification, development data and evaluation data had
+not changed.
+
+The baseline, Policy 1 and Policy 2 were run once on the same thirty reserved
+EVALUATION cases. The baseline saw no requested verification fields. Policy 1
+saw only the result after requesting it. Policy 2 saw the result and source
+independence after requesting them. Hidden states were used only by the
+evaluator after each final action.
+
+### Held-out comparison
+
+| Metric | Baseline | Policy 1 | Policy 2 |
+|---|---:|---:|---:|
+| Approved | 7 | 18 | 13 |
+| Human review | 19 | 7 | 12 |
+| Stopped | 4 | 5 | 5 |
+| Verification requests | 0 | 19 | 19 |
+| False approvals | 3 | 7 | 4 |
+| False stops | 0 | 0 | 0 |
+| Automatic coverage | 36.7% | 76.7% | 60.0% |
+| Automatic accuracy | 72.7% | 69.6% | 77.8% |
+| Fraud recall | 26.7% | 33.3% | 33.3% |
+
+Automatic accuracy excludes HUMAN_REVIEW because review is a deferred outcome,
+not a known-correct decision.
+
+### What Policy 2 improved
+
+SAME_CHANNEL PASS no longer reduced risk. This moved fraudulent P2-013,
+P2-021 and P2-035 from Policy 1 APPROVE to Policy 2 HUMAN_REVIEW. The same rule
+also conservatively moved legitimate P2-016 and P2-026 to review. Policy 2 had
+three fewer false approvals than Policy 1 and a higher automatic accuracy.
+
+### What Policy 2 did not solve
+
+Policy 2 falsely approved P2-019, P2-023, P2-029 and P2-033. Three of these
+cases began at score zero or one, so the current policy approved them without
+requesting additional evidence. P2-029 began at score two but received an
+INDEPENDENT PASS, which reduced it to the approval region. This demonstrates
+that independence improves evidence quality but still does not make PASS proof
+of legitimacy.
+
+### Frozen-criteria decision
+
+Eight of the nine held-out criteria passed. The failed criterion was that false
+approvals must be no higher than the baseline: Policy 2 had four while the
+baseline had three. Therefore the correct conclusion is
+`POLICY_2_NOT_BETTER_FOR_FROZEN_OBJECTIVE`.
+
+This is a valid negative result. The thirty cases are now seen evidence and
+Policy 2 must not be modified and rerun on them as though they remained unseen.
+The evaluation record stores hashes for the input, runner and all result
+artifacts. Any later policy change requires a new version and new evaluation
+cases.

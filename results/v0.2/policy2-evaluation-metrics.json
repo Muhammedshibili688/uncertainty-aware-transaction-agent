@@ -1,0 +1,40 @@
+{
+  "experiment_name": "policy 2 v0.2 held-out evaluation",
+  "dataset_version": "v0.2",
+  "dataset_split": "EVALUATION",
+  "policy_name": "policy2_reliability_aware_v0.2",
+  "total_cases": 30,
+  "legitimate_cases": 15,
+  "fraudulent_cases": 15,
+  "approved": 13,
+  "human_review": 12,
+  "stopped": 5,
+  "verification_requests": 19,
+  "automatic_decisions": 18,
+  "correct_automatic_decisions": 14,
+  "false_approvals": 4,
+  "false_stops": 0,
+  "automatic_coverage": 0.6,
+  "automatic_accuracy": 0.7778,
+  "human_review_rate": 0.4,
+  "verification_request_rate": 0.6333,
+  "fraud_recall": 0.3333,
+  "action_by_true_state": {
+    "LEGITIMATE": {
+      "APPROVE": 9,
+      "HUMAN_REVIEW": 6,
+      "STOP": 0
+    },
+    "FRAUDULENT": {
+      "APPROVE": 4,
+      "HUMAN_REVIEW": 6,
+      "STOP": 5
+    }
+  },
+  "notes": [
+    "Automatic accuracy excludes HUMAN_REVIEW.",
+    "HUMAN_REVIEW is deferred.",
+    "Risk updates are points rather than probabilities.",
+    "These are one-time held-out v0.2 results."
+  ]
+}

@@ -48,6 +48,8 @@ when the true transaction state is unknown and new evidence becomes available.
 
 - `step_up_result_if_requested`, revealed only after the agent selects
   `GET_MORE_EVIDENCE`
+- `verification_independence_if_requested`, added in v0.2 and revealed with
+  the requested result only to Policy 2
 
 ### Possible actions
 
@@ -76,7 +78,14 @@ when the true transaction state is unknown and new evidence becomes available.
 - [x] Held-out comparison runner implemented and tested
 - [x] Baseline and Policy 1 evaluated on the same thirty held-out cases
 - [x] Held-out comparison findings recorded
-- [ ] Policy 2 implemented
+- [x] Policy 2 hypothesis and v0.2 evidence contract frozen
+- [x] Forty new v0.2 cases prepared with a reproducible 10/30 split
+- [x] Policy 2 implemented and unit tested
+- [x] Policy 2 development experiment completed
+- [x] Policy 2 frozen after meeting development criteria
+- [x] Policy 2 held-out runner implemented and protected against reruns
+- [x] Policy 2 evaluated once on the thirty reserved v0.2 cases
+- [x] Policy 2 held-out findings and artifact hashes recorded
 - [ ] Five final failures analysed
 - [ ] Probability decision record completed
 - [ ] Three AI reviews completed
@@ -96,3 +105,23 @@ criterion and is not considered better than the baseline for the stated v0.1
 objective. In particular, a misleading PASS moved fraudulent CASE-030 from
 baseline HUMAN_REVIEW to Policy 1 APPROVE. The evaluation cases are now used
 evidence and must not be treated as unseen data for a modified policy.
+
+Policy 2 v0.2 tested a narrower reliability hypothesis. It subtracts one
+risk point after PASS only when the result comes from an independent channel.
+SAME_CHANNEL and UNKNOWN PASS leave the score unchanged, while FAIL still adds
+one point. On ten new development cases, Policy 2 reduced Policy 1's false
+approvals from two to one, kept false stops at zero and used four human reviews
+compared with the baseline's seven. All nine Policy 2 development criteria were
+met, so the design was frozen before evaluation.
+
+All seventy-one project tests passed before the one-time v0.2 held-out run.
+Across the thirty reserved cases, Policy 2 reduced human review from the
+baseline's nineteen cases to twelve and made no false stops. It also reduced
+Policy 1's false approvals from seven to four, but the baseline had only three
+false approvals. Because Policy 2 exceeded that frozen baseline safety limit,
+it is **not better for the complete stated objective**. Its four false approvals
+were P2-019, P2-023, P2-029 and P2-033.
+
+The v0.2 evaluation cases are now seen evidence and must not be reused as unseen
+data for a changed policy. Any further design requires a new version and newly
+reserved evaluation cases.
