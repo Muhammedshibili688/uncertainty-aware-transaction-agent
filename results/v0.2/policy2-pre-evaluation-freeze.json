@@ -1,0 +1,33 @@
+{
+  "freeze_name": "policy2_v0.2_pre_evaluation",
+  "freeze_date": "2026-09-03",
+  "policy_name": "policy2_reliability_aware_v0.2",
+  "status": "FROZEN_BEFORE_HELD_OUT_EVALUATION",
+  "tests_passed": 63,
+  "development_cases": 10,
+  "reserved_evaluation_cases": 30,
+  "development_metrics": {
+    "approved": 4,
+    "human_review": 4,
+    "stopped": 2,
+    "false_approvals": 1,
+    "false_stops": 0,
+    "all_success_criteria_met": true
+  },
+  "sha256": {
+    "src/agent.py": "d6ea04aeda6f359cdcdcb464e8683ab1bd113103116c7025c9547f101d4c0abc",
+    "src/run_policy2.py": "2ae4a638eafd035d50f5a9dd9d6d7ea1556e2d74657014c324c692bdf0699f95",
+    "config/v0.2-parameters.json": "e988000a212f8fcad54141d97bb4ba263488e22ad3334b5ae8a2900e86c6adf5",
+    "docs/policy2-hypothesis.md": "98aeb1cc8d189881c2a41f9d268cd8366df6a416880a46b18a6e912f91174de4",
+    "docs/v0.2-spec.md": "ce89629c64e52e3ea4f2753d686eb6fd921fa2da6fcd3a92f33ee4518031ad76",
+    "data/cases-development-v0.2.csv": "83243c15ce83f76a541bdef0f73549a1b7e06197774df627c03bc39be6410155",
+    "data/cases-evaluation-v0.2.csv": "90919d00510daf6b70511c0c0b20eb3af27f35de5a622b4f5ec0bc6f38ef57d4",
+    "tests/test_policy2.py": "b9ba42808b095b544d096e3c2f19387791c3b9375c2bc8fb5fb3076ba592d43a"
+  },
+  "notes": [
+    "The three audited category inconsistencies were corrected before this freeze.",
+    "Development metrics remained unchanged after correction.",
+    "Git metadata was not writable to the sandbox account, so file hashes record the pre-evaluation boundary.",
+    "The held-out evaluation must not be used to modify Policy 2."
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "dataset_version": "v0.2",
+  "parameter_status": "FROZEN_POLICY_2_AFTER_DEVELOPMENT_RUN",
+  "policy_2": {
+    "policy_name": "policy2_reliability_aware_v0.2",
+    "purpose": "Lower risk after PASS only when verification comes from an independent channel.",
+    "initial_score_range": {
+      "minimum": 0,
+      "maximum": 6
+    },
+    "initial_action_thresholds": {
+      "approve_maximum_score": 1,
+      "get_more_evidence_minimum_score": 2,
+      "get_more_evidence_maximum_score": 3,
+      "stop_minimum_score": 4
+    },
+    "verification_results": [
+      "PASS",
+      "FAIL",
+      "INCONCLUSIVE",
+      "UNAVAILABLE"
+    ],
+    "verification_independence_values": [
+      "INDEPENDENT",
+      "SAME_CHANNEL",
+      "UNKNOWN"
+    ],
+    "evidence_update_rules": {
+      "independent_pass": -1,
+      "same_channel_pass": 0,
+      "unknown_independence_pass": 0,
+      "fail": 1,
+      "inconclusive": 0,
+      "unavailable": 0
+    },
+    "post_verification_action_thresholds": {
+      "approve_maximum_score": 1,
+      "human_review_minimum_score": 2,
+      "human_review_maximum_score": 3,
+      "stop_minimum_score": 4
+    },
+    "maximum_verification_requests": 1,
+    "assumption_note": "The score updates are transparent simulation assumptions and not calibrated fraud probabilities. Independence describes the evidence source and does not reveal the hidden state."
+  }
+}

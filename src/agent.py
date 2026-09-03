@@ -689,3 +689,320 @@ class Policy1Agent:
             predicted_state=predicted_state,
             reason=reason,
         )
+
+
+# Policy 2 changes only the interpretation of a successful verification. A
+# PASS lowers risk only when it comes from an independent evidence channel.
+POLICY_2_NAME = "policy2_reliability_aware_v0.2"
+POLICY_2_REQUEST_MINIMUM_SCORE = 2
+POLICY_2_REQUEST_MAXIMUM_SCORE = 3
+POLICY_2_MAXIMUM_VERIFICATION_REQUESTS = 1
+
+POLICY_2_VERIFICATION_RESULTS = {
+    "PASS",
+    "FAIL",
+    "INCONCLUSIVE",
+    "UNAVAILABLE",
+}
+
+POLICY_2_INDEPENDENCE_VALUES = {
+    "INDEPENDENT",
+    "SAME_CHANNEL",
+    "UNKNOWN",
+}
+
+
+@dataclass(frozen=True)
+class Policy2InitialDecision:
+    """Store Policy 2's decision before additional evidence is revealed.
+
+    Input represented by this object:
+        The three baseline point contributions and their total risk score.
+
+    Output represented by this object:
+        The first action and whether the runner is permitted to reveal the two
+        verification fields.
+
+    Why this separate object exists:
+        Keeping the initial and final stages separate makes it difficult for a
+        runner to expose verification evidence before Policy 2 asks for it.
+    """
+
+    policy_name: str
+    amount_points: int
+    device_location_points: int
+    velocity_points: int
+    initial_risk_score: int
+    initial_action: str
+    verification_requested: bool
+    reason: str
+
+
+@dataclass(frozen=True)
+class Policy2Decision:
+    """Store the complete terminal result of one Policy 2 decision.
+
+    The record preserves both stages for auditing. It says whether evidence was
+    requested, which result and independence category were observed, how the
+    risk points changed, and which final terminal action was selected.
+    """
+
+    policy_name: str
+    amount_points: int
+    device_location_points: int
+    velocity_points: int
+    initial_risk_score: int
+    initial_action: str
+    verification_requested: bool
+    verification_result_observed: str
+    verification_independence_observed: str
+    verification_score_adjustment: int
+    final_risk_score: int
+    final_action: str
+    predicted_state: Optional[str]
+    reason: str
+
+
+def policy2_verification_adjustment(
+    verification_result: str,
+    verification_independence: str,
+) -> int:
+    """Convert Policy 2's additional evidence into a risk-point change.
+
+    Input:
+        ``verification_result`` must be PASS, FAIL, INCONCLUSIVE or
+        UNAVAILABLE. ``verification_independence`` must be INDEPENDENT,
+        SAME_CHANNEL or UNKNOWN.
+
+    Returns:
+        ``-1`` for an independent PASS, ``+1`` for any FAIL, and ``0`` for
+        every other valid combination.
+
+    What happens inside:
+        Values are normalized and validated. FAIL is treated conservatively as
+        warning evidence. PASS becomes reassuring only when the source is
+        independent. A same-channel or unknown PASS is not considered strong
+        enough to reduce the score.
+
+    Important:
+        This function returns risk points, not a probability.
+    """
+
+    result = verification_result.strip().upper()
+    independence = verification_independence.strip().upper()
+
+    if result not in POLICY_2_VERIFICATION_RESULTS:
+        raise ValueError(
+            f"Invalid Policy 2 verification result: {result!r}. "
+            f"Allowed values: {sorted(POLICY_2_VERIFICATION_RESULTS)}"
+        )
+    if independence not in POLICY_2_INDEPENDENCE_VALUES:
+        raise ValueError(
+            "Invalid Policy 2 verification independence: "
+            f"{independence!r}. Allowed values: "
+            f"{sorted(POLICY_2_INDEPENDENCE_VALUES)}"
+        )
+
+    if result == "FAIL":
+        return 1
+    if result == "PASS" and independence == "INDEPENDENT":
+        return -1
+    return 0
+
+
+class Policy2Agent:
+    """Interpret verification according to its reliability and independence.
+
+    Initial input:
+        Exactly ``amount_deviation``, ``device_location_context`` and
+        ``recent_velocity``. The class reuses the frozen baseline to validate
+        these fields and calculate the zero-to-six initial risk index.
+
+    Additional input:
+        A verification result and an independence category may be supplied only
+        after an initial score of two or three requests more evidence.
+
+    Returns:
+        ``decide_initial`` returns ``Policy2InitialDecision``.
+        ``finalize`` returns ``Policy2Decision`` with APPROVE, HUMAN_REVIEW or
+        STOP. It never returns a second GET_MORE_EVIDENCE action.
+
+    What happens inside:
+        Low scores are approved and high scores are stopped immediately. Scores
+        two and three request one check. An independent PASS subtracts one
+        point, FAIL adds one point, and all other valid combinations leave the
+        score unchanged. The frozen baseline terminal thresholds are then
+        applied.
+    """
+
+    def __init__(self) -> None:
+        """Create Policy 2 with a private frozen-baseline score calculator."""
+
+        self._baseline = BaselineAgent()
+
+    def decide_initial(
+        self,
+        evidence: Mapping[str, str],
+    ) -> Policy2InitialDecision:
+        """Choose the first action without seeing verification evidence.
+
+        Input:
+            A dictionary containing exactly the three frozen initial fields.
+
+        Returns:
+            The baseline-derived score and either APPROVE,
+            GET_MORE_EVIDENCE or STOP.
+
+        What happens inside:
+            The baseline validates the exact evidence allow-list and calculates
+            points. Policy 2 changes only the middle action: scores two and
+            three request one verification result plus its independence.
+        """
+
+        baseline_decision = self._baseline.decide(evidence)
+        initial_score = baseline_decision.risk_score
+
+        if initial_score <= APPROVE_MAXIMUM_SCORE:
+            initial_action = "APPROVE"
+            verification_requested = False
+        elif initial_score <= POLICY_2_REQUEST_MAXIMUM_SCORE:
+            initial_action = "GET_MORE_EVIDENCE"
+            verification_requested = True
+        else:
+            initial_action = "STOP"
+            verification_requested = False
+
+        reason = (
+            f"The frozen initial evidence score was {initial_score}. "
+            f"Policy 2 selected {initial_action}. Verification requested: "
+            f"{verification_requested}."
+        )
+
+        return Policy2InitialDecision(
+            policy_name=POLICY_2_NAME,
+            amount_points=baseline_decision.amount_points,
+            device_location_points=baseline_decision.device_location_points,
+            velocity_points=baseline_decision.velocity_points,
+            initial_risk_score=initial_score,
+            initial_action=initial_action,
+            verification_requested=verification_requested,
+            reason=reason,
+        )
+
+    def finalize(
+        self,
+        initial_decision: Policy2InitialDecision,
+        verification_result: Optional[str] = None,
+        verification_independence: Optional[str] = None,
+    ) -> Policy2Decision:
+        """Finish Policy 2 after conditionally receiving additional evidence.
+
+        Input:
+            ``initial_decision`` must come from this policy. If it requested
+            evidence, both verification values are required. If it did not
+            request evidence, neither value may be supplied.
+
+        Returns:
+            A terminal ``Policy2Decision`` containing the observed evidence,
+            point update, final score, action and optional predicted state.
+
+        What happens inside:
+            Requested values are normalized and converted into an asymmetric
+            point change. The score is clamped to zero through six and passed
+            through the frozen terminal thresholds. Unrequested values are
+            marked NOT_REQUESTED and the initial terminal action is preserved.
+
+        Raises:
+            ``ValueError`` for missing, unexpected or invalid additional
+            evidence and for an inconsistent initial decision object.
+        """
+
+        if initial_decision.policy_name != POLICY_2_NAME:
+            raise ValueError(
+                "Policy 2 can finalize only its own initial decisions."
+            )
+
+        if initial_decision.verification_requested:
+            if initial_decision.initial_action != "GET_MORE_EVIDENCE":
+                raise ValueError(
+                    "A Policy 2 request must follow GET_MORE_EVIDENCE."
+                )
+            if verification_result is None:
+                raise ValueError(
+                    "A verification result is required after "
+                    "GET_MORE_EVIDENCE."
+                )
+            if verification_independence is None:
+                raise ValueError(
+                    "Verification independence is required after "
+                    "GET_MORE_EVIDENCE."
+                )
+
+            observed_result = verification_result.strip().upper()
+            observed_independence = (
+                verification_independence.strip().upper()
+            )
+            adjustment = policy2_verification_adjustment(
+                observed_result,
+                observed_independence,
+            )
+            final_score = max(
+                0,
+                min(
+                    MAXIMUM_RISK_SCORE,
+                    initial_decision.initial_risk_score + adjustment,
+                ),
+            )
+            final_action, predicted_state = score_to_action(final_score)
+        else:
+            if verification_result is not None:
+                raise ValueError(
+                    "A verification result cannot be supplied when Policy 2 "
+                    "did not request it."
+                )
+            if verification_independence is not None:
+                raise ValueError(
+                    "Verification independence cannot be supplied when "
+                    "Policy 2 did not request it."
+                )
+
+            observed_result = "NOT_REQUESTED"
+            observed_independence = "NOT_REQUESTED"
+            adjustment = 0
+            final_score = initial_decision.initial_risk_score
+
+            if initial_decision.initial_action == "APPROVE":
+                final_action = "APPROVE"
+                predicted_state = "LEGITIMATE"
+            elif initial_decision.initial_action == "STOP":
+                final_action = "STOP"
+                predicted_state = "FRAUDULENT"
+            else:
+                raise ValueError(
+                    "A non-terminal initial action must request verification."
+                )
+
+        reason = (
+            f"Initial score {initial_decision.initial_risk_score} produced "
+            f"{initial_decision.initial_action}. Verification result: "
+            f"{observed_result}. Independence: {observed_independence}. "
+            f"Score adjustment: {adjustment:+d}. Final score: {final_score}. "
+            f"Final action: {final_action}."
+        )
+
+        return Policy2Decision(
+            policy_name=POLICY_2_NAME,
+            amount_points=initial_decision.amount_points,
+            device_location_points=initial_decision.device_location_points,
+            velocity_points=initial_decision.velocity_points,
+            initial_risk_score=initial_decision.initial_risk_score,
+            initial_action=initial_decision.initial_action,
+            verification_requested=initial_decision.verification_requested,
+            verification_result_observed=observed_result,
+            verification_independence_observed=observed_independence,
+            verification_score_adjustment=adjustment,
+            final_risk_score=final_score,
+            final_action=final_action,
+            predicted_state=predicted_state,
+            reason=reason,
+        )

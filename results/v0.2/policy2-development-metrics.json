@@ -1,0 +1,81 @@
+{
+  "experiment_name": "Policy 2 v0.2 development experiment",
+  "dataset_version": "v0.2",
+  "dataset_split": "DEVELOPMENT",
+  "policy_2": {
+    "policy_name": "policy2_reliability_aware_v0.2",
+    "total_cases": 10,
+    "legitimate_cases": 6,
+    "fraudulent_cases": 4,
+    "approved": 4,
+    "human_review": 4,
+    "stopped": 2,
+    "verification_requests": 7,
+    "automatic_decisions": 6,
+    "correct_automatic_decisions": 5,
+    "false_approvals": 1,
+    "false_stops": 0,
+    "automatic_coverage": 0.6,
+    "automatic_accuracy": 0.8333,
+    "human_review_rate": 0.4,
+    "verification_request_rate": 0.7,
+    "fraud_recall": 0.5
+  },
+  "comparators_on_same_cases": {
+    "baseline": {
+      "policy_name": "baseline_static_v0.1",
+      "total_cases": 10,
+      "legitimate_cases": 6,
+      "fraudulent_cases": 4,
+      "approved": 2,
+      "human_review": 7,
+      "stopped": 1,
+      "verification_requests": 0,
+      "automatic_decisions": 3,
+      "correct_automatic_decisions": 2,
+      "false_approvals": 1,
+      "false_stops": 0,
+      "automatic_coverage": 0.3,
+      "automatic_accuracy": 0.6667,
+      "human_review_rate": 0.7,
+      "verification_request_rate": 0.0,
+      "fraud_recall": 0.25
+    },
+    "policy_1": {
+      "policy_name": "policy1_step_up_v0.1",
+      "total_cases": 10,
+      "legitimate_cases": 6,
+      "fraudulent_cases": 4,
+      "approved": 6,
+      "human_review": 2,
+      "stopped": 2,
+      "verification_requests": 7,
+      "automatic_decisions": 8,
+      "correct_automatic_decisions": 6,
+      "false_approvals": 2,
+      "false_stops": 0,
+      "automatic_coverage": 0.8,
+      "automatic_accuracy": 0.75,
+      "human_review_rate": 0.2,
+      "verification_request_rate": 0.7,
+      "fraud_recall": 0.5
+    }
+  },
+  "success_criteria": {
+    "fewer_false_approvals_than_policy1": true,
+    "false_approvals_not_higher_than_baseline": true,
+    "false_stops_not_higher_than_baseline": true,
+    "human_review_lower_than_baseline": true,
+    "independent_pass_can_resolve_legitimate_score_two": true,
+    "unreliable_pass_never_lowers_risk": true,
+    "verification_only_for_scores_two_and_three": true,
+    "maximum_one_request_per_case": true,
+    "all_final_actions_terminal": true
+  },
+  "all_success_criteria_met": true,
+  "notes": [
+    "The thirty v0.2 evaluation cases were not executed.",
+    "HUMAN_REVIEW is deferred.",
+    "Risk updates are points rather than probabilities."
+  ]
+}
