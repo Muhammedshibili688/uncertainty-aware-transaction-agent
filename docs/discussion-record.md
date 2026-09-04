@@ -9,6 +9,53 @@ the agent design, or result in no change.
 
 ---
 
+## Completion audit
+
+This audit separates evidence that is already recorded from activity that must
+still happen on the real platforms. Research links and AI-written summaries do
+not count as conversations unless I genuinely made the contribution and the
+linked replies exist.
+
+### Reddit evidence currently available
+
+| Community | First recorded discussion | Second contribution in same community | Two-or-more-replies requirement | Current status |
+|---|---|---|---|---|
+| r/AskStatistics | [Correlated fraud signals](https://www.reddit.com/r/AskStatistics/s/BZ1VEQxhVU) | NOT RECORDED | NOT VERIFIED | INCOMPLETE |
+| r/fintech | [Grey-area transaction checks](https://www.reddit.com/r/fintech/s/mfsh3ynZBH) | NOT RECORDED | NOT VERIFIED | INCOMPLETE |
+| r/LLMDevs | [Stopping evidence collection](https://www.reddit.com/r/LLMDevs/s/shbBbf8LG5) | NOT RECORDED | NOT VERIFIED | INCOMPLETE |
+| r/payments | [Location mismatch](https://www.reddit.com/r/payments/s/LA3TVkNyE5) | NOT RECORDED | NOT VERIFIED | INCOMPLETE |
+| r/AMLCompliance | [Historical behaviour](https://www.reddit.com/r/AMLCompliance/s/v13bVHIQza) | NOT RECORDED | NOT VERIFIED | INCOMPLETE |
+
+Five useful Reddit summaries exist below. To satisfy the Week 1 quantity rule,
+I still need to verify that each community was active and permitted the
+contribution, record a second contribution in each community, and show that at
+least five discussions received two or more replies. Missing links must not be
+invented.
+
+### X evidence currently available
+
+The research file identifies eight relevant accounts:
+
+`@ltvxdotai`, `@grimicorn`, `@WeAreIncognia`, `@CardNotPresent`,
+`@JavelinStrategy`, `@ThePaypers`, `@ACI_Worldwide`, and `@NVIDIAAI`.
+
+These are research leads, not proof that the accounts were followed or that a
+discussion happened. Week 1 still requires 15–25 relevant accounts, 21–28
+useful comments over seven days, and three discussions with two or more
+replies.
+
+Use the table below only for genuine activity:
+
+| Date | Account | Post link | My first contribution | Human answer | My next answer | Design change |
+|---|---|---|---|---|---|---|
+| NOT RECORDED | NOT RECORDED | NOT RECORDED | NOT RECORDED | NOT RECORDED | NOT RECORDED | NOT RECORDED |
+
+### Overall public-discussion status
+
+`INCOMPLETE — awaiting verifiable Reddit contribution counts and genuine X activity.`
+
+---
+
 ## Reddit
 
 ### Discussion 1 — Correlated fraud signals
