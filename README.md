@@ -62,8 +62,10 @@ when the true transaction state is unknown and new evidence becomes available.
 
 - [x] Problem selected
 - [x] Initial objective defined
-- [x] Initial research completed
-- [x] Public discussions recorded
+- [x] Initial research file completed
+- [x] Five Reddit discussion summaries recorded
+- [ ] Required Reddit contribution and reply counts verified
+- [ ] Required X account, comment and discussion evidence recorded
 - [x] v0.1 agent specification frozen
 - [x] Forty simulated cases prepared
 - [x] Development and evaluation splits created
@@ -86,9 +88,12 @@ when the true transaction state is unknown and new evidence becomes available.
 - [x] Policy 2 held-out runner implemented and protected against reruns
 - [x] Policy 2 evaluated once on the thirty reserved v0.2 cases
 - [x] Policy 2 held-out findings and artifact hashes recorded
-- [ ] Five final failures analysed
-- [ ] Probability decision record completed
-- [ ] Three AI reviews completed
+- [x] Five final incorrect decisions analysed
+- [x] Probability decision record completed
+- [x] README reproduction instructions documented
+- [x] Practitioner and probability AI reviews recorded
+- [ ] Project-owner review dispositions confirmed
+- [ ] Preprint AI review completed
 - [ ] Preprint completed
 - [ ] Work published
 
@@ -125,3 +130,115 @@ were P2-019, P2-023, P2-029 and P2-033.
 The v0.2 evaluation cases are now seen evidence and must not be reused as unseen
 data for a changed policy. Any further design requires a new version and newly
 reserved evaluation cases.
+
+## Reproducing the project
+
+### Requirements
+
+- Python 3.10 or newer
+- Git
+- No third-party Python packages; the current implementation uses the Python
+  standard library
+
+Run the commands from the repository root:
+
+```powershell
+cd "C:\VScode\Agentic AI\uncertainty-aware-transaction-agent"
+python --version
+```
+
+### Run the complete automated test suite
+
+```powershell
+python -m unittest discover -s tests -v
+```
+
+The verified project state contains 71 passing tests. Tests cover score
+boundaries, invalid inputs, hidden-label leakage, evidence-request limits,
+dataset-split protection, freeze hashes and evaluation-output protection.
+
+### Recreate the data splits in a development copy
+
+These commands deterministically rewrite the split CSV files from their master
+files. Run them only in a development copy if you want to preserve an entirely
+clean frozen checkout.
+
+```powershell
+python .\scripts\split_cases.py
+python .\scripts\split_cases_v0.2.py
+```
+
+Expected data boundaries:
+
+| Dataset | Development | Evaluation |
+|---|---:|---:|
+| v0.1 | 10 | 30 |
+| v0.2 | 10 | 30 |
+
+### Run the development experiments
+
+These commands overwrite their development result artifacts with reproducible
+results:
+
+```powershell
+python .\src\run_baseline.py
+python .\src\run_policy1.py
+python .\src\run_policy2.py
+```
+
+Development results are written under `results/v0.1/` and `results/v0.2/`.
+
+### Held-out evaluation rule
+
+The v0.1 and v0.2 held-out evaluations have already been executed. Their cases
+are now seen evidence. Do not rerun either evaluation and describe it as a new
+unseen test.
+
+The protected Policy 2 runner is:
+
+```powershell
+python .\src\run_policy2_evaluation.py
+```
+
+In this repository it should refuse to run because evaluation outputs already
+exist. That refusal protects the recorded experiment. An independent
+reproduction may run the command only in a disposable pre-evaluation copy where
+the result files are absent; such a run reproduces the calculation but is not a
+new held-out evaluation.
+
+The final comparison is recorded in:
+
+- `results/v0.2/baseline-vs-policy1-vs-policy2-evaluation-summary.md`
+- `results/v0.2/policy-comparison-evaluation.json`
+- `results/v0.2/policy2-evaluation-record.json`
+
+### Metric interpretation
+
+- A false approval is a fraudulent transaction given `APPROVE`.
+- A false stop is a legitimate transaction given `STOP`.
+- Human-review rate is the share sent to `HUMAN_REVIEW`.
+- Automatic coverage includes only `APPROVE` and `STOP`.
+- Automatic accuracy is calculated only over automatic decisions.
+- `HUMAN_REVIEW` is deferred and is not counted as correct.
+- The 0–6 risk score is an ordinal point score, not a probability.
+
+## Stakeholders, limitations and human control
+
+The main affected stakeholders are customers, merchants, issuers/payment
+providers and human fraud reviewers. The simulation does not estimate how the
+cost is divided among them.
+
+Important limitations:
+
+- all cases are designed simulations rather than sampled production traffic;
+- the balanced evaluation set does not estimate real fraud prevalence;
+- point scores and evidence adjustments are not calibrated probabilities;
+- review-team capacity, queue time and service-level targets are not modelled;
+- the system assumes verification-source independence is available and correct;
+- device and behavioural familiarity cannot establish customer authorization;
+- verification friction and monetary error costs are discussed but not measured.
+
+`STOP` means stopping the individual simulated transaction. It does not mean
+closing an account, accusing a customer or taking an irreversible action. A
+production system would require notification, appeal, recovery and human
+support procedures.
