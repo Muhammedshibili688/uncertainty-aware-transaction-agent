@@ -18,19 +18,20 @@ linked replies exist.
 
 ### Reddit evidence currently available
 
-| Community | First recorded discussion | Second contribution in same community | Two-or-more-replies requirement | Current status |
+| Community | First recorded discussion | Second contribution in same community | Replies visible in supplied second-round evidence | Current status |
 |---|---|---|---|---|
-| r/AskStatistics | [Correlated fraud signals](https://www.reddit.com/r/AskStatistics/s/BZ1VEQxhVU) | NOT RECORDED | NOT VERIFIED | INCOMPLETE |
-| r/fintech | [Grey-area transaction checks](https://www.reddit.com/r/fintech/s/mfsh3ynZBH) | NOT RECORDED | NOT VERIFIED | INCOMPLETE |
-| r/LLMDevs | [Stopping evidence collection](https://www.reddit.com/r/LLMDevs/s/shbBbf8LG5) | NOT RECORDED | NOT VERIFIED | INCOMPLETE |
-| r/payments | [Location mismatch](https://www.reddit.com/r/payments/s/LA3TVkNyE5) | NOT RECORDED | NOT VERIFIED | INCOMPLETE |
-| r/AMLCompliance | [Historical behaviour](https://www.reddit.com/r/AMLCompliance/s/v13bVHIQza) | NOT RECORDED | NOT VERIFIED | INCOMPLETE |
+| r/AskStatistics | [Correlated fraud signals](https://www.reddit.com/r/AskStatistics/s/BZ1VEQxhVU) | [Imperfect verification reliability](https://www.reddit.com/r/AskStatistics/s/Coli7aNHfQ) | 1 reply supplied | Two contributions recorded; reply target not yet demonstrated |
+| r/fintech | [Grey-area transaction checks](https://www.reddit.com/r/fintech/s/mfsh3ynZBH) | [Review reduction versus false approvals](https://www.reddit.com/r/fintech/s/GU1khvqkB0) | 2 replies supplied | Two contributions recorded; second discussion meets reply target |
+| r/LLMDevs | [Stopping evidence collection](https://www.reddit.com/r/LLMDevs/s/shbBbf8LG5) | [How an agent should stop collecting evidence](https://www.reddit.com/r/LLMDevs/s/U1AyMMOuUH) | 5 replies supplied | Two contributions recorded; second discussion meets reply target |
+| r/payments | [Location mismatch](https://www.reddit.com/r/payments/s/LA3TVkNyE5) | [Same-device authentication dependence](https://www.reddit.com/r/payments/s/B9uSDwPRd0) | 1 reply supplied | Two contributions recorded; reply target not yet demonstrated |
+| r/AMLCompliance | [Historical behaviour](https://www.reddit.com/r/AMLCompliance/s/v13bVHIQza) | [Familiar behaviour as false reassurance](https://www.reddit.com/r/AMLCompliance/s/om78WpXjg1) | Reply evidence not supplied | Two contributions recorded; reply target not yet demonstrated |
 
-Five useful Reddit summaries exist below. To satisfy the Week 1 quantity rule,
-I still need to verify that each community was active and permitted the
-contribution, record a second contribution in each community, and show that at
-least five discussions received two or more replies. Missing links must not be
-invented.
+Ten Reddit contribution links are now recorded across five communities. The
+supplied screenshots demonstrate at least two discussions with two or more
+replies: the second r/fintech discussion and the second r/LLMDevs discussion.
+The target requires five such discussions, so three more qualifying reply
+counts still need to be verified. A live link by itself is not treated as proof
+of a reply count, and missing evidence must not be invented.
 
 ### X evidence currently available
 
@@ -53,6 +54,87 @@ Use the table below only for genuine activity:
 ### Overall public-discussion status
 
 `INCOMPLETE — awaiting verifiable Reddit contribution counts and genuine X activity.`
+
+---
+
+## Second Reddit contribution round
+
+These entries record the second contribution link for each of the five
+communities. The response summaries below are limited to comments supplied by
+the project owner; they do not claim that every comment on the live post was
+captured.
+
+### r/LLMDevs — How should an agent decide when to stop collecting evidence?
+
+**Link:** https://www.reddit.com/r/LLMDevs/s/U1AyMMOuUH
+
+**Replies supplied:** 5
+
+The strongest repeated suggestion was to ask whether the next check could
+realistically change the action. If no possible result would change the plan,
+the agent should stop collecting evidence. If a result could matter, its
+expected value should be compared with latency, cost and a hard request budget.
+
+**Project interpretation:** This supports the existing one-request cap while
+showing why a future stopping rule should be based on decision relevance, not
+confidence alone. It does not justify changing the already frozen Policy 2.
+
+### r/payments — When should same-device authentication not reduce risk?
+
+**Link:** https://www.reddit.com/r/payments/s/B9uSDwPRd0
+
+**Replies supplied:** 1
+
+The response described transaction and authentication on the same compromised
+device as a single point of failure. It argued that the apparent second factor
+does not provide meaningful separation when an attacker controls the original
+environment, particularly for a high-value action.
+
+**Project interpretation:** This directly supports Policy 2's decision not to
+lower risk after a `SAME_CHANNEL` PASS.
+
+### r/fintech — Is lower review worth more false approvals?
+
+**Link:** https://www.reddit.com/r/fintech/s/GU1khvqkB0
+
+**Replies supplied:** 2
+
+One response suggested defining a maximum tolerable false-approval rate rather
+than rejecting every workload trade-off immediately. Another separated the
+question into the agent's assigned objective and its behaviour on edge cases.
+
+**Project interpretation:** This supports the frozen multi-metric objective.
+Review reduction is useful only inside an explicitly declared safety limit.
+Because Policy 2 exceeded the baseline false-approval limit, the project keeps
+the negative conclusion.
+
+### r/AskStatistics — How should imperfect verification reliability be shown?
+
+**Link:** https://www.reddit.com/r/AskStatistics/s/Coli7aNHfQ
+
+**Replies supplied:** 1
+
+The response suggested reporting a confidence interval for a proportion and
+describing the improvement as a range rather than presenting one small-sample
+percentage as exact performance.
+
+**Project interpretation:** The current designed sample is too small and not
+population-representative, so the project does not claim calibrated reliability.
+The suggestion is retained for a future study with repeated or sampled data.
+
+### r/AMLCompliance — Can familiar behaviour create false reassurance?
+
+**Link:** https://www.reddit.com/r/AMLCompliance/s/om78WpXjg1
+
+**Replies supplied:** Not recorded in the available project evidence
+
+The question challenges the assumption that historical similarity establishes
+authorization when an unauthorized person may have controlled the account for
+some time.
+
+**Project interpretation:** The question matches the failure observed in
+familiar-context fraud cases, but no human response is claimed until reply
+evidence is supplied.
 
 ---
 
