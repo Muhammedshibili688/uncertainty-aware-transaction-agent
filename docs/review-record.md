@@ -2,13 +2,11 @@
 
 ## How to read this file
 
-This file records two AI-assisted reviews completed after the Policy 2 held-out
-evaluation: a practitioner review and a probability review. The dispositions
-below are evidence-based draft project decisions. The project owner must read
-them and confirm that the reasoning is understood before presenting the work.
-
-The third required review—the preprint review—cannot be completed until a
-preprint draft exists.
+This file records three AI-assisted reviews completed after the Policy 2
+held-out evaluation: a practitioner review, a probability review and a preprint
+review. The dispositions below are evidence-based draft project decisions. The
+project owner must read them and confirm that the reasoning is understood
+before presenting the work.
 
 ## Review 1 — Practitioner review
 
@@ -61,12 +59,43 @@ correct and must remain visible. The probability example explains belief
 updating, but it is not calibrated and should not be used to claim real-world
 fraud risk.
 
+## Review 3 — Preprint review
+
+**AI tool:** OpenAI Codex
+
+**Review date:** 2026-09-05
+
+**Material reviewed:** `paper/week1-preprint.md` together with the frozen
+specifications, result summaries, failure analysis, probability decision record
+and README.
+
+| AI review comment | Accept or reject | Reason | Change | Evidence |
+|---|---|---|---|---|
+| The report must not call the 0–6 score a fraud probability. | ACCEPT | The implementation ranks warning evidence but does not estimate calibrated odds. | The preprint repeatedly calls it an ordinal risk index and keeps the Bayesian exercise separate. | `src/agent.py`; `decisions/probability-decision-record.md`; `paper/week1-preprint.md` |
+| The report should present Policy 2 as a negative result under the full frozen objective. | ACCEPT | Policy 2 reduced Policy 1 false approvals but still produced four compared with the baseline's three. | The abstract, results and conclusion state that Policy 2 did not beat the complete objective. | `results/v0.2/policy-comparison-evaluation.json` |
+| v0.1 and v0.2 percentages should not be described as one continuous benchmark. | ACCEPT | The versions use separate designed evaluation sets. | Results are divided into separate v0.1 and v0.2 subsections; comparisons are made only within each version. | `data/cases-evaluation-v0.1.csv`; `data/cases-evaluation-v0.2.csv` |
+| The meaning of the 71 tests should be explained. | ACCEPT | Readers could mistake software checks for evaluated transactions. | The reproducibility section distinguishes 71 software checks from the 10/30 transaction splits. | `tests/`; `paper/week1-preprint.md` |
+| The designed and balanced cases must not support production-performance claims. | ACCEPT | Scenario coverage is not a sample of live fraud prevalence. | The abstract, dataset section and limitations scope every metric to the simulation. | `data/cases-v0.2.csv`; `paper/week1-preprint.md` |
+| The failure analysis should explain mechanisms, not only list wrong predictions. | ACCEPT | Knowing why a decision failed is more useful than reporting a count alone. | The preprint groups failures into missing authorization evidence and imperfect verification reliability. | `docs/failure-analysis.md` |
+| Public-discussion requirements should be presented as complete because ten Reddit links exist. | REJECT | Ten contribution links do not prove that five discussions received two replies, and they do not complete the X requirement. | The preprint and discussion audit retain an explicit incomplete status. | `docs/discussion-record.md` |
+| The report should propose Policy 3 thresholds using the revealed evaluation cases. | REJECT | Those cases are now seen; tuning on them would weaken the experimental boundary. | Future work requires a new version and new unseen evaluation cases. | `results/v0.2/policy2-evaluation-record.json` |
+
+### Preprint review conclusion
+
+The preprint is internally consistent with the frozen policies and recorded
+metrics. It clearly separates ordinal scoring from probability, reports the
+failed success criterion and describes the simulation limitations. It is ready
+for project-owner reading. Public-discussion evidence and publication remain
+separate completion requirements.
+
 ## Project-owner confirmation
 
-- [ ] I read both reviews and can explain each accepted and rejected comment.
+- [ ] I read all three reviews and can explain each accepted and rejected comment.
 - [ ] I checked that no review comment silently changed frozen Policy 2.
 - [ ] I confirmed that all probabilities and costs without comparable data are
   labelled simulation assumptions.
+- [ ] I read the preprint and confirmed that its claims match the recorded
+  results and limitations.
 
-The two reviews are recorded. They become final project decisions only after
+The three reviews are recorded. They become final project decisions only after
 the project owner completes the confirmation above.
