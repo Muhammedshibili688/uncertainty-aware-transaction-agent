@@ -23,6 +23,18 @@ Policy 2 reduced false approvals compared with Policy 1, but it still had one
 more false approval than the baseline. This is why Policy 2 was not declared
 better for the complete frozen objective.
 
+## Five failures at a glance
+
+| Case | Policy | Wrong action | What fooled the agent | Main lesson |
+|---|---|---|---|---|
+| P2-019 | Policy 2 | APPROVE | A thief used the customer's familiar phone near home | A known device does not prove who is using it |
+| P2-023 | Policy 2 | APPROVE | Family-device misuse produced only one mild warning | The evidence set lacks a direct authorization signal |
+| P2-029 | Policy 2 | APPROVE | An independent check returned an incorrect PASS | Independent evidence can still be wrong |
+| P2-033 | Policy 2 | APPROVE | Stolen credentials produced familiar-looking behaviour | Similarity to history does not prove legitimacy |
+| P2-013 | Policy 1 | APPROVE | A compromised phone confirmed its own transaction | Same-channel verification can be circular |
+
+The sections below show the evidence and score calculation behind each row.
+
 ## Failure 1 — Normal-looking possession is not authorization
 
 ### Case
@@ -195,8 +207,8 @@ transaction**. It can create direct financial exposure, customer harm,
 investigation work and loss of trust. A legitimate stop is also harmful because
 it interrupts a real customer, but it can often be corrected through another
 payment attempt or human intervention. No legitimate transaction was stopped
-in the v0.2 held-out comparison, so the experiment provides no observed false-
-stop case from which to estimate that cost.
+in the v0.2 held-out comparison, so the experiment provides no observed
+false-stop case from which to estimate that cost.
 
 Among Policy 2's four false approvals, P2-029 had the largest simulated
 transaction amount at 26,000. That amount is exposure, not a measured realized

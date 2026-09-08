@@ -1,135 +1,113 @@
-# Uncertainty-Aware-Transaction-Agent
+# Uncertainty-Aware Transaction Agent
 
-A small transaction decision-agent experiment that reasons under uncertainty.
-It compares a static baseline with policies that can update risk when new
-evidence becomes available, then choose whether to approve, collect more
-evidence, send the case to human review, or stop the transaction.
+This project studies a simple question: **when should a transaction agent act,
+and when should it ask for more evidence?**
 
-## Problem
+The agent does not know whether a transaction is legitimate or fraudulent when
+it makes its decision. It uses visible warning signals, may request one
+verification, and then chooses `APPROVE`, `HUMAN_REVIEW`, or `STOP`.
 
-The agent observes an online transaction and a small set of behavioural risk
-signals. It must choose one of these actions:
+> **Current conclusion:** Policy 2 made verification safer than Policy 1, but it
+> did not beat the baseline on every frozen success criterion. This is a useful
+> negative result, not a production fraud-detection claim.
 
-- approve the transaction;
-- obtain additional evidence;
-- send the case for human review;
-- stop the transaction;
+## Project at a glance
 
-because whether the transaction is genuinely fraudulent is not known at decision time.
+| Question | Answer |
+|---|---|
+| What is hidden? | Whether the transaction is `LEGITIMATE` or `FRAUDULENT` |
+| What can the agent initially see? | Amount deviation, device/location context and recent velocity |
+| What may it request? | One step-up verification result |
+| What changed in v0.2? | The agent also considers whether a PASS came from an independent channel |
+| What can it do? | `APPROVE`, `GET_MORE_EVIDENCE`, `HUMAN_REVIEW`, `STOP` |
+| Is the score a probability? | No. It is a transparent 0–6 risk-point ranking |
+| Is this production performance? | No. Results come from small, designed simulation cases |
 
-## Objective
+## Architecture
 
-The objective is to test whether an uncertainty-aware transaction policy can
-reduce unnecessary human reviews compared with simpler decision policies while
-controlling two costly errors:
+![Uncertainty-aware transaction-agent architecture](docs/architecture.png)
 
-- approving a fraudulent transaction;
-- stopping a legitimate transaction.
+The diagram shows the decision boundary in simple terms. The agent sees the
+transaction evidence and may request one verification before choosing a final
+action. The legitimate/fraudulent state remains hidden until the evaluator
+checks the completed decision.
 
-The goal is not to build a 100% accurate fraud detector.
+## How the policies evolved
 
-The goal is to study how an agent should change its belief and action, 
-when the true transaction state is unknown and new evidence becomes available.
+| Version | What it does | Why it was introduced |
+|---|---|---|
+| Baseline | Adds points from three initial signals and applies fixed action bands | Provides a simple, explainable comparison point |
+| Policy 1 | Requests one verification for scores 2–3; PASS lowers risk and FAIL raises it | Tests whether one extra check can resolve uncertain cases |
+| Policy 2 | Lowers risk only when PASS comes from an independent channel | Prevents a compromised device from confirming its own transaction |
 
-## Initial Agent Scope
+Policy 2 still treats an independent PASS as evidence rather than proof. This
+matters because one fraudulent evaluation case passed the independent check.
 
-### Hidden states
+## Experiment design
 
-- Legitimate transaction
-- Fraudulent transaction
+Each dataset version contains 40 manually reviewed simulation cases:
 
-### Initial evidence
+| Dataset | Used to design and debug | Reserved for one-time evaluation |
+|---|---:|---:|
+| v0.1 | 10 cases | 30 cases |
+| v0.2 | 10 cases | 30 cases |
 
-- `amount_deviation`
-- `device_location_context`
-- `recent_velocity`
+The policy was frozen after development and before its evaluation cases were
+opened. Once evaluated, those cases became seen evidence and cannot be reused
+as an unseen test for a modified policy.
 
-### Additional evidence
+## Held-out results
 
-- `step_up_result_if_requested`, revealed only after the agent selects
-  `GET_MORE_EVIDENCE`
-- `verification_independence_if_requested`, added in v0.2 and revealed with
-  the requested result only to Policy 2
+The two tables belong to different designed datasets. Compare policies within
+one table; do not treat v0.1 and v0.2 as one continuous benchmark.
 
-### Possible actions
+### v0.1 evaluation: Baseline versus Policy 1
 
-- APPROVE
-- GET MORE EVIDENCE
-- HUMAN REVIEW
-- STOP
+| Policy | Human reviews | False approvals | False stops | Automatic coverage |
+|---|---:|---:|---:|---:|
+| Baseline | 10 | 3 | 0 | 66.7% |
+| Policy 1 | 6 | 4 | 0 | 80.0% |
 
-## Current Status
+Policy 1 handled more transactions automatically, but it approved one more
+fraudulent transaction. It therefore failed the complete objective.
 
-- [x] Problem selected
-- [x] Initial objective defined
-- [x] Initial research file completed
-- [x] Five Reddit discussion summaries recorded
-- [ ] Required Reddit contribution and reply counts verified
-- [ ] Required X account, comment and discussion evidence recorded
-- [x] v0.1 agent specification frozen
-- [x] Forty simulated cases prepared
-- [x] Development and evaluation splits created
-- [x] Static multi-signal baseline implemented
-- [x] Baseline unit tests implemented and passing
-- [x] Baseline development experiment completed
-- [x] Baseline findings recorded
-- [x] Policy 1 implemented
-- [x] Policy 1 unit tests implemented and passing
-- [x] Policy 1 development experiment completed
-- [x] Policy 1 development findings recorded
-- [x] Held-out comparison runner implemented and tested
-- [x] Baseline and Policy 1 evaluated on the same thirty held-out cases
-- [x] Held-out comparison findings recorded
-- [x] Policy 2 hypothesis and v0.2 evidence contract frozen
-- [x] Forty new v0.2 cases prepared with a reproducible 10/30 split
-- [x] Policy 2 implemented and unit tested
-- [x] Policy 2 development experiment completed
-- [x] Policy 2 frozen after meeting development criteria
-- [x] Policy 2 held-out runner implemented and protected against reruns
-- [x] Policy 2 evaluated once on the thirty reserved v0.2 cases
-- [x] Policy 2 held-out findings and artifact hashes recorded
-- [x] Five final incorrect decisions analysed
-- [x] Probability decision record completed
-- [x] README reproduction instructions documented
-- [x] Practitioner and probability AI reviews recorded
-- [ ] Project-owner review dispositions confirmed
-- [ ] Preprint AI review completed
-- [ ] Preprint completed
-- [ ] Work published
+### v0.2 evaluation: Baseline versus Policy 1 versus Policy 2
 
-## Project Status
+| Policy | Human reviews | False approvals | False stops | Automatic coverage |
+|---|---:|---:|---:|---:|
+| Baseline | 19 | 3 | 0 | 36.7% |
+| Policy 1 | 7 | 7 | 0 | 76.7% |
+| Policy 2 | 12 | 4 | 0 | 60.0% |
 
-The frozen v0.1 baseline and Policy 1 have now been compared once on the same
-thirty held-out evaluation cases. Policy 1 reduced human review from ten cases
-to six and increased automatic coverage from 66.7 percent to 80 percent. It
-also raised fraud recall from 60 percent to 66.7 percent.
+Policy 2 corrected several unsafe same-channel approvals from Policy 1. It also
+used fewer human reviews than the baseline. However, its four false approvals
+were still above the baseline limit of three, so Policy 2 was **not declared
+the winner**.
 
-However, Policy 1 increased false approvals from three to four, while false
-stops remained zero. It therefore did not meet every predeclared success
-criterion and is not considered better than the baseline for the stated v0.1
-objective. In particular, a misleading PASS moved fraudulent CASE-030 from
-baseline HUMAN_REVIEW to Policy 1 APPROVE. The evaluation cases are now used
-evidence and must not be treated as unseen data for a modified policy.
+## What the failures taught us
 
-Policy 2 v0.2 tested a narrower reliability hypothesis. It subtracts one
-risk point after PASS only when the result comes from an independent channel.
-SAME_CHANNEL and UNKNOWN PASS leave the score unchanged, while FAIL still adds
-one point. On ten new development cases, Policy 2 reduced Policy 1's false
-approvals from two to one, kept false stops at zero and used four human reviews
-compared with the baseline's seven. All nine Policy 2 development criteria were
-met, so the design was frozen before evaluation.
+| Lesson | Plain-language meaning |
+|---|---|
+| Possession is not authorization | A familiar phone may still be used by the wrong person |
+| Familiar behaviour is not proof | Fraud can resemble the customer's normal activity |
+| Same-channel confirmation can be circular | A compromised device should not confirm itself |
+| Independent checks can still fail | Separation improves evidence quality but does not guarantee truth |
 
-All seventy-one project tests passed before the one-time v0.2 held-out run.
-Across the thirty reserved cases, Policy 2 reduced human review from the
-baseline's nineteen cases to twelve and made no false stops. It also reduced
-Policy 1's false approvals from seven to four, but the baseline had only three
-false approvals. Because Policy 2 exceeded that frozen baseline safety limit,
-it is **not better for the complete stated objective**. Its four false approvals
-were P2-019, P2-023, P2-029 and P2-033.
+The full case-by-case analysis is in
+[`docs/failure-analysis.md`](docs/failure-analysis.md).
 
-The v0.2 evaluation cases are now seen evidence and must not be reused as unseen
-data for a changed policy. Any further design requires a new version and newly
-reserved evaluation cases.
+## Week 1 completion status
+
+| Area | Status |
+|---|---|
+| Research, frozen specifications and datasets | Complete |
+| Baseline, Policy 1 and Policy 2 implementation | Complete |
+| Development and held-out evaluation | Complete |
+| Failure and probability analysis | Complete |
+| AI reviews and preprint draft | Complete; owner confirmation still required |
+| Reddit evidence | 10 contribution links recorded; reply-count target still incomplete |
+| X participation evidence | Incomplete |
+| Publication | Not completed |
 
 ## Reproducing the project
 
