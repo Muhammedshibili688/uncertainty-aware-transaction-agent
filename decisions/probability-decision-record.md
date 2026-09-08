@@ -2,8 +2,8 @@
 
 ## Purpose and boundary
 
-This is one transparent probability exercise for development case `P2-001`.
-It demonstrates how a belief could be updated when new evidence arrives.
+I worked through development case `P2-001` to show, step by step, how new
+evidence could update a probability belief.
 
 It does **not** convert the implemented 0–6 risk score into a probability. The
 implemented score is an ordinal risk index. The probabilities, likelihoods,

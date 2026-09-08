@@ -1,11 +1,12 @@
 # Discussion Record
 
-This file records direct discussions with practitioners, engineers,
-researchers, and other community members during the Week 1 project.
+I used this file to keep track of the conversations that influenced the Week 1
+project. The contributors included practitioners, engineers, researchers and
+other community members.
 
-The purpose is not to treat every comment as ground truth. Each response is
-recorded as evidence that may challenge an assumption, suggest a test, change
-the agent design, or result in no change.
+I did not treat a comment as fact just because someone posted it online. I used
+each response to question an assumption, suggest a test or decide whether the
+agent design should change.
 
 ---
 
@@ -59,10 +60,9 @@ Use the table below only for genuine activity:
 
 ## Second Reddit contribution round
 
-These entries record the second contribution link for each of the five
-communities. The response summaries below are limited to comments supplied by
-the project owner; they do not claim that every comment on the live post was
-captured.
+These entries contain my second contribution in each of the five communities.
+The summaries use only the replies I saved, so they may not include every
+comment currently visible on the live posts.
 
 ### r/LLMDevs — How should an agent decide when to stop collecting evidence?
 

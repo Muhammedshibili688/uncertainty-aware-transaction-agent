@@ -1,7 +1,9 @@
 # An Uncertainty-Aware Transaction Agent: Learning When Evidence Is Enough
 
-**Project report version:** 1.0  
-**Status:** Complete draft for project-owner review  
+**Project report version:** 1.0
+
+**Status:** Complete draft — awaiting my final review
+
 **Scope:** Small, auditable simulation; not a production fraud system
 
 ## Abstract
@@ -11,17 +13,16 @@ known. A normal-looking payment can be fraudulent, while a legitimate purchase
 can look unusual because a customer is travelling, using a different phone,
 buying something expensive or making several purchases close together.
 
-This project studies a narrow question than “Can I build a perfect fraud
-detector?” 
-The question is whether an agent can use uncertainty more carefully:
+I studied a narrower question than “Can I build a perfect fraud detector?” The
+question was whether an agent could handle uncertainty more carefully:
 act immediately when the evidence is strong enough, request one useful check
 when the case is uncertain, and defer to a human when the remaining evidence
 does not support a safe automatic action.
 
 I compared three transparent policies on designed transaction scenarios. The
-baseline used a fixed 0–6 risk score. 
-Policy 1 requested one verification for borderline scores and treated every PASS as reassuring. 
-Policy 2 changed onething: a PASS reduced risk only when it came from an independent channel.
+baseline used a fixed 0–6 risk score. Policy 1 requested one verification for
+borderline scores and treated every PASS as reassuring. Policy 2 changed one
+thing: a PASS reduced risk only when it came from an independent channel.
 On the final thirty-case v0.2 evaluation, Policy 2 reduced human reviews from 19
 to 12 and reduced Policy 1’s false approvals from 7 to 4. However, the baseline
 had only 3 false approvals. Policy 2 therefore failed one frozen success
@@ -51,11 +52,9 @@ The central research question is:
 > Can an uncertainty-aware policy reduce unnecessary human review without
 > increasing fraudulent approvals or stopping legitimate customers?
 
-This objective deliberately has more than one metric. Reducing review by
-approving everything would be easy, but unsafe. Stopping everything would also
-avoid fraudulent approvals, but would harm legitimate customers. A useful
-policy has to manage the trade-off rather than hide it inside one accuracy
-number.
+I used more than one metric because accuracy alone hides important trade-offs.
+Approving everything would reduce review but allow fraud. Stopping everything
+would prevent fraudulent approvals but harm legitimate customers.
 
 ![High-level decision architecture](../docs/architecture.png)
 
@@ -227,7 +226,7 @@ from 7 to 4 and reduced the baseline’s review count from 19 to 12.
 
 However, Policy 2 still produced one more false approval than the baseline.
 Eight of nine frozen criteria passed, but the false-approval criterion failed.
-The correct experimental conclusion is therefore:
+My conclusion was:
 
 > Policy 2 is safer than Policy 1 in this simulation, but it is not better for
 > the complete frozen objective.
@@ -298,8 +297,8 @@ Other important limitations are:
 - final fraud labels may be delayed or selected by earlier policies;
 - binary hidden states omit fraud subtypes and non-fraud payment failures.
 
-The project should therefore be read as an experiment in decision structure,
-not a claim of production fraud-detection performance.
+I treat this as an experiment in decision structure, not as a claim of
+production fraud-detection performance.
 
 ## 10. Reproducibility and checks
 
@@ -334,11 +333,11 @@ a same-channel PASS should not automatically reduce concern. Yet an independent
 PASS can still be wrong, and normal-looking context can still hide unauthorized
 use.
 
-The most important result is not that one policy “won.” It is that every
-improvement claim was tested against frozen conditions and the failed condition
-was kept visible. That is the behaviour expected from an uncertainty-aware
-project: make assumptions explicit, learn from evidence, and avoid claiming
-more certainty than the experiment supports.
+The most important result is not that one policy “won.” It is that I tested
+each improvement claim against conditions fixed in advance and kept the failed
+condition visible. That is the main lesson I take from the project: state the
+assumptions, learn from the evidence and do not claim more certainty than the
+experiment supports.
 
 ## References and project evidence
 
@@ -359,8 +358,8 @@ more certainty than the experiment supports.
 
 ## AI-use and evidence note
 
-AI tools helped organise the research, generate code drafts, review documents
-and improve explanations. The project owner remains responsible for
-understanding every rule and confirming the recorded review dispositions.
-Public-discussion requirements are reported separately and remain incomplete
-unless the linked contributions and reply counts are genuinely verified.
+I used AI tools to help organise research, draft parts of the code, review the
+documents and improve explanations. I checked the suggestions against the
+project evidence and remain responsible for every rule and final decision.
+Public-discussion requirements are tracked separately and count only when the
+linked contributions and reply numbers can be verified.

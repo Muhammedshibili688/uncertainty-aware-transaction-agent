@@ -2,11 +2,11 @@
 
 ## How to read this file
 
-This file records three AI-assisted reviews completed after the Policy 2
-held-out evaluation: a practitioner review, a probability review and a preprint
-review. The dispositions below are evidence-based draft project decisions. The
-project owner must read them and confirm that the reasoning is understood
-before presenting the work.
+After completing the Policy 2 evaluation, I used AI to review the project from
+three angles: fraud practice, probability reasoning and preprint quality. I
+treated the comments as suggestions, checked them against the project evidence
+and then recorded which ones I accepted or rejected. AI supported the review;
+the final decisions remain mine.
 
 ## Review 1 — Practitioner review
 
@@ -82,13 +82,12 @@ and README.
 
 ### Preprint review conclusion
 
-The preprint is internally consistent with the frozen policies and recorded
-metrics. It clearly separates ordinal scoring from probability, reports the
-failed success criterion and describes the simulation limitations. It is ready
-for project-owner reading. Public-discussion evidence and publication remain
-separate completion requirements.
+The preprint matches the frozen policies and recorded metrics. It separates the
+point score from probability, keeps the failed success criterion visible and
+states the limits of the simulation. I still need to complete my own final read
+before publication. Public-discussion evidence remains a separate requirement.
 
-## Project-owner confirmation
+## My final check
 
 - [ ] I read all three reviews and can explain each accepted and rejected comment.
 - [ ] I checked that no review comment silently changed frozen Policy 2.
@@ -97,5 +96,5 @@ separate completion requirements.
 - [ ] I read the preprint and confirmed that its claims match the recorded
   results and limitations.
 
-The three reviews are recorded. They become final project decisions only after
-the project owner completes the confirmation above.
+I will treat these as final project decisions only after completing the checks
+above.
