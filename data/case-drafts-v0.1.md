@@ -1,15 +1,20 @@
 # v0.1 Detailed Case Drafts
 
 Version: v0.1  
-Status: DRAFT  
+Status: REVIEWED AND TRANSFERRED TO CSV
 Related registry: `case-plan-v0.1.md`  
-Intended next artifact: `cases-v0.1.csv`
+Output artifact: `cases-v0.1.csv`
 
 ## Purpose
 
-This file expands the 40 registry entries into complete, human-reviewable case cards. It is separate from the coverage plan because the plan answers **what the dataset should cover**, while this file records **how each simulated case is constructed**.
+I used this file to turn the 40 planned scenarios into detailed case cards. The
+coverage plan says **what the dataset should cover**; these cards show **how I
+constructed each simulated case**.
 
-These are AI-assisted drafts, not accepted facts and not a frozen dataset. Review every case manually. A case may move from `DRAFTED` to `REVIEWED` only when you can explain and defend its story, evidence categories, hidden state, and verification outcome. Only reviewed cases should be copied into `cases-v0.1.csv`.
+AI helped with the first drafts, but that did not make the cases accepted
+facts. I reviewed each story, evidence category, hidden state and verification
+outcome before treating a case as `REVIEWED` and copying it into
+`cases-v0.1.csv`.
 
 The rupee values and customer histories are simulation assumptions. They are not bank rules or universal fraud thresholds. Each real-world event is written first; the evidence is then derived from that event. No case is designed to force a particular policy action.
 
@@ -2130,8 +2135,8 @@ Use this table while reviewing the drafts. Do not mark a case `REVIEWED` merely 
 
 | Case range | What to check | Reviewer status |
 |---|---|---|
-| CASE-001–CASE-010 | Review these development cases first. Revise definitions or derivation rules only if a real inconsistency is found. | NOT STARTED |
-| CASE-011–CASE-040 | Keep these evaluation labels hidden while developing the policy. Review them for realism and leakage without tuning the policy to their outcomes. | NOT STARTED |
+| CASE-001–CASE-010 | Review these development cases first. Revise definitions or derivation rules only if a real inconsistency is found. | COMPLETED |
+| CASE-011–CASE-040 | Keep these evaluation labels hidden while developing the policy. Review them for realism and leakage without tuning the policy to their outcomes. | COMPLETED |
 
 For each case, ask:
 
@@ -2143,5 +2148,6 @@ For each case, ask:
 6. Would the policy see only the frozen v0.1 evidence?
 7. Can you explain the case in your own words?
 
-After reviewing a case, update its registry status to `REVIEWED`. Then copy its structured fields into the CSV and change the status to `ADDED_TO_CSV`. Use `FROZEN` only after the whole v0.1 dataset has passed consistency and leakage checks.
+After review, I copied the structured fields into `cases-v0.1.csv`. The master
+CSV and its fixed development/evaluation splits are now the experiment inputs.
 

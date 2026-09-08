@@ -6,9 +6,9 @@ Freeze date: 2026-09-02
 
 ## 1. Purpose
 
-This document defines every column in the v0.2 simulated transaction dataset.
-v0.2 preserves the v0.1 transaction evidence and adds one field describing the
-independence of requested verification.
+This is the column guide for the v0.2 simulated transaction data. It keeps the
+v0.1 evidence fields and adds one field showing whether a requested
+verification came from an independent source.
 
 The dataset is designed for a transparent policy experiment. It is not real
 bank data and should not be used to claim production fraud performance.

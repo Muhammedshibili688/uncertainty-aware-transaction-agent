@@ -1,15 +1,15 @@
 # v0.1 Simulation Data Dictionary
 
 Version: v0.1
-Status: DRAFT
-Freeze date:
+Status: FROZEN FOR V0.1 EXPERIMENT
+Freeze date: 2026-09-01
 
 ## 1. Purpose
 
-This document defines the structure of the simulated transaction dataset used
-to evaluate the v0.1 uncertainty-aware transaction agent.
+This is the column guide for the simulated transaction data used in the v0.1
+experiment.
 
-Each row in `cases.csv` represents one simulated online transaction.
+Each row in `cases-v0.1.csv` represents one simulated online transaction.
 
 The dataset contains:
 
@@ -690,11 +690,11 @@ Before using `cases.csv`, the following checks must pass:
 
 ## 5. CSV format and column order
 
-The v0.1 simulated cases will be stored in:
+The v0.1 simulated cases are stored in:
 
 `data/cases-v0.1.csv`
 
-The file will use UTF-8 encoding and contain one header row followed by one row
+The file uses UTF-8 encoding and contains one header row followed by one row
 for each simulated transaction.
 
 The columns must appear in this order:
@@ -722,6 +722,7 @@ The CSV header will be:
 
 ```csv
 case_id,scenario_name,scenario_description,research_scenario,split,true_state,usual_amount_min,usual_amount_max,transaction_amount,amount_deviation,device_status,location_status,device_location_context,normal_max_attempts_1h,recent_attempts_1h,recent_velocity,step_up_result_if_requested,category_reasoning
+```
 
 ## 6. Dataset limitations
 
@@ -735,12 +736,12 @@ legitimate cases look too safe.
 To reduce this problem, the dataset must include misleading, conflicting,
 borderline and missing-evidence cases.
 
-The same cases will be used for the baseline and uncertainty-aware policies so
-that the comparison is fair.
+The baseline and uncertainty-aware policies use the same cases so that the
+comparison is fair.
 
 ## 7. Freeze declaration
 
-Before freezing this data dictionary, I will verify that:
+Before freezing this data dictionary, I verified that:
 
 - every column has a clear meaning;
 - every categorical column has an allowed-value list;
@@ -748,5 +749,5 @@ Before freezing this data dictionary, I will verify that:
 - the schema agrees with `v0.1-spec.md`;
 - no real customer data is included.
 
-Freeze date:
-Status: DRAFT
+Freeze date: 2026-09-01
+Status: FROZEN FOR V0.1 EXPERIMENT

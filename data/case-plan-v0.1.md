@@ -1,20 +1,17 @@
 # v0.1 Case Coverage Plan
 
 Version: v0.1  
-Status: DRAFT  
+Status: FROZEN FOR V0.1 DATASET
 Target: 40 cases  
 Development cases: 10  
 Evaluation cases: 30  
-Freeze date:
+Freeze date: 2026-09-01
 
 ## 1. Purpose
 
-This document defines the scenario coverage for the v0.1 simulated transaction
-dataset.
-
-The plan is intended to prevent the dataset from containing only easy examples
-where every suspicious signal means fraud and every normal signal means
-legitimacy.
+This plan shows the kinds of transactions included in the v0.1 simulation. I
+used it to avoid building a dataset made only of easy examples where every
+warning means fraud and every normal signal means legitimacy.
 
 The planned cases include:
 
@@ -31,18 +28,16 @@ This document is planning and evaluation material only. The case names,
 scenario families, research points and planned hidden states must not be passed
 to the agent.
 
-The complete case stories and reasoning will be written separately in
-`case-drafts-v0.1.md`.
-
-Reviewed cases will later be transferred into `cases-v0.1.csv`.
+The complete case stories and reasoning are in `case-drafts-v0.1.md`. The
+reviewed structured cases were transferred into `cases-v0.1.csv`.
 
 ## 2. Development and evaluation split
 
-The dataset will contain two splits.
+The dataset contains two splits.
 
 ### DEVELOPMENT
 
-The 10 development cases may be used to:
+The 10 development cases were available to:
 
 - check whether the data dictionary is usable;
 - perform manual probability calculations;
@@ -50,11 +45,11 @@ The 10 development cases may be used to:
 - identify unclear category definitions;
 - verify that the agent follows the frozen specification.
 
-Development cases may be examined while implementing the agent.
+These cases could be examined while implementing the agent.
 
 ### EVALUATION
 
-The 30 evaluation cases will be used only after:
+The 30 evaluation cases were held back until:
 
 - the data dictionary is frozen;
 - the policies are written;
@@ -87,6 +82,10 @@ must be preserved and the change must be recorded.
 have exactly one true state: `LEGITIMATE` or `FRAUDULENT`.
 
 ## 4. Case registry
+
+This table is the original planning record, so its row-level status values show
+where each case stood when the plan was written. The reviewed versions are in
+`case-drafts-v0.1.md` and `cases-v0.1.csv`.
 
 | Case ID | Short name | Scenario family | Split | Planned state | Research point | Status |
 |---|---|---|---|---|---|---|
@@ -275,7 +274,7 @@ preprint.
 
 ## 12. Freeze declaration
 
-Before freezing this case plan, I will confirm that:
+Before freezing this case plan, I confirmed that:
 - all 40 case slots are listed;
 - each scenario family has one development and three evaluation cases;
 - the evaluation split contains both legitimate and fraudulent cases;
@@ -285,13 +284,9 @@ Before freezing this case plan, I will confirm that:
 - the planned cases address the important findings from the research and human
   discussions.
 
-Until these checks are complete:
-Status: DRAFT
+Status: FROZEN FOR V0.1 DATASET
+Freeze date: 2026-09-01
 
-When the checks are complete:
-Status: FROZEN FOR V0.1 CASE DRAFTING
-
-Freeze date: YYYY-MM-DD
 After freezing, a change to scenario-family counts, split assignments or
 required coverage must be recorded in the change log.
 
@@ -299,4 +294,4 @@ required coverage must be recorded in the change log.
 
 |Version | Date	| Change | Reason | Cases affected |
 |---|---|---|---|---|
-|v0.1 | Pending | Initial 40-case coverage plan | Define case coverage before drafting the dataset | CASE-001 to CASE-040 |
+|v0.1 | 2026-09-01 | Froze the 40-case coverage plan | Preserve the reviewed coverage used by the first experiment | CASE-001 to CASE-040 |
