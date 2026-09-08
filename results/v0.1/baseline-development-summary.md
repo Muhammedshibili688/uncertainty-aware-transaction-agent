@@ -14,9 +14,8 @@
 
 ## Purpose
 
-The purpose of this experiment was to test whether a static baseline
-using amount, device/location context, and recent velocity could make
-useful transaction decisions before introducing additional
+I started with a static baseline using amount, device/location context and
+recent velocity. This gave me a simple comparison point before adding
 verification or probability-based reasoning.
 
 ## Results
