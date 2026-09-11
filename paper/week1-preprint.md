@@ -2,7 +2,7 @@
 
 **Project report version:** 1.0
 
-**Status:** Complete draft — awaiting my final review
+**Status:** Complete - final review completed
 
 **Scope:** Small, auditable simulation; not a production fraud system
 

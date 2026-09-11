@@ -8,7 +8,7 @@ treated the comments as suggestions, checked them against the project evidence
 and then recorded which ones I accepted or rejected. AI supported the review;
 the final decisions remain mine.
 
-## Review 1 — Practitioner review
+## Review 1 - Practitioner review
 
 **AI tool:** OpenAI Codex  
 **Review date:** 2026-09-04  
@@ -33,7 +33,7 @@ evidence boundary and frozen comparison. Its main deployment gaps are simulated
 data, unmeasured operational costs, uncertain evidence provenance and the lack
 of identity/consent signals for familiar-context fraud.
 
-## Review 2 — Probability review
+## Review 2 - Probability review
 
 **AI tool:** OpenAI Codex  
 **Review date:** 2026-09-04  
@@ -59,7 +59,7 @@ correct and must remain visible. The probability example explains belief
 updating, but it is not calibrated and should not be used to claim real-world
 fraud risk.
 
-## Review 3 — Preprint review
+## Review 3 - Preprint review
 
 **AI tool:** OpenAI Codex
 
@@ -89,12 +89,13 @@ before publication. Public-discussion evidence remains a separate requirement.
 
 ## My final check
 
-- [ ] I read all three reviews and can explain each accepted and rejected comment.
-- [ ] I checked that no review comment silently changed frozen Policy 2.
-- [ ] I confirmed that all probabilities and costs without comparable data are
+- [x] I have read all three reviews and can explain each accepted and rejected
+  comment.
+- [x] I have checked that no review comment silently changed frozen Policy 2.
+- [x] I have confirmed that all probabilities and costs without comparable data are
   labelled simulation assumptions.
-- [ ] I read the preprint and confirmed that its claims match the recorded
+- [x] I have read the preprint and confirmed that its claims match the recorded
   results and limitations.
 
-I will treat these as final project decisions only after completing the checks
-above.
+I have completed these checks and now treat the review outcomes as final project
+decisions.

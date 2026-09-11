@@ -267,6 +267,11 @@ AI suggested several numerical probabilities without supporting data. I did
 not use them as real fraud probabilities; I kept any unsourced numbers clearly
 labelled as simulation assumptions.
 
+AI is not part of the running transaction agent. The current agent uses fixed,
+auditable Python rules. I used AI outside the agent to help with research,
+drafting, code review and clearer explanations. I checked the suggestions and
+made the final project decisions.
+
 | Prompt / task | What was useful | What I rejected or corrected |
 |---|---|---|
 | Plan the initial research for an uncertainty-aware transaction agent | Helped identify topics such as false positives, human review, verification, latency and delayed feedback | Rejected broad communities and unverified numerical claims |

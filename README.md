@@ -105,8 +105,8 @@ The full case-by-case analysis is in
 | Development and held-out evaluation | Complete |
 | Automated checks | 71 tests passed in the last verified run |
 | Failure and probability analysis | Complete |
-| Practitioner, probability and preprint AI reviews | Complete; my final confirmation is still required |
-| Week 1 preprint | Complete draft; final proofreading still required |
+| Practitioner, probability and preprint AI reviews | Complete and confirmed by me |
+| Week 1 preprint | Complete and proofread by me |
 | Reddit evidence | 10 contribution links recorded; reply-count target still incomplete |
 | X participation evidence | Incomplete |
 | Publication | Not completed |
