@@ -103,8 +103,10 @@ The full case-by-case analysis is in
 | Research, frozen specifications and datasets | Complete |
 | Baseline, Policy 1 and Policy 2 implementation | Complete |
 | Development and held-out evaluation | Complete |
+| Automated checks | 71 tests passed in the last verified run |
 | Failure and probability analysis | Complete |
-| AI reviews and preprint draft | Complete; owner confirmation still required |
+| Practitioner, probability and preprint AI reviews | Complete; my final confirmation is still required |
+| Week 1 preprint | Complete draft; final proofreading still required |
 | Reddit evidence | 10 contribution links recorded; reply-count target still incomplete |
 | X participation evidence | Incomplete |
 | Publication | Not completed |
@@ -199,6 +201,18 @@ The final comparison is recorded in:
 - Automatic accuracy is calculated only over automatic decisions.
 - `HUMAN_REVIEW` is deferred and is not counted as correct.
 - The 0–6 risk score is an ordinal point score, not a probability.
+
+### Cost interpretation
+
+The current comparison reports false approvals, false stops, human reviews and
+verification requests separately. It does not claim a monetary saving because
+the project has no reliable real-world cost for any of those outcomes.
+
+The probability decision record contains one illustrative cost example, but
+those numbers are simulation assumptions. A future cost-sensitive version
+should choose and justify its costs before evaluation, calculate total cost on
+new unseen cases and show how the conclusion changes under other reasonable
+cost choices.
 
 ## Stakeholders, limitations and human control
 

@@ -46,11 +46,10 @@ discussion happened. Week 1 still requires 15–25 relevant accounts, 21–28
 useful comments over seven days, and three discussions with two or more
 replies.
 
-Use the table below only for genuine activity:
-
-| Date | Account | Post link | My first contribution | Human answer | My next answer | Design change |
-|---|---|---|---|---|---|---|
-| NOT RECORDED | NOT RECORDED | NOT RECORDED | NOT RECORDED | NOT RECORDED | NOT RECORDED | NOT RECORDED |
+No verified X contribution is recorded yet. When genuine activity is available,
+I will record the date, account, post link, my comment, any human reply, my
+follow-up and whether the discussion changed the design. I have removed the
+empty placeholder row because it did not provide evidence.
 
 ### Overall public-discussion status
 

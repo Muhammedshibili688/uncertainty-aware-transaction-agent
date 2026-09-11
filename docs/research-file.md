@@ -1,5 +1,18 @@
 # Research File
 
+## Two-minute reading route
+
+This file keeps the full research trail. For a quick understanding, read these
+two sections first:
+
+1. [Current Assumptions](#13-current-assumptions) — the boundaries I used for
+   the first prototype.
+2. [Research Change Log](#14-research-change-log) — what I believed at the
+   start, what changed and where the design ended up.
+
+Sections 1–12 provide the questions, sources and reasoning behind those two
+summaries.
+
 ## 1. Problem Statement
 
 The agent observes an online transaction and a small set of behavioral risk
@@ -247,6 +260,12 @@ Direct human discussions are recorded separately in `discussion-record.md`.
 ---
 
 ## 11. AI Use Log
+
+I keep this log to separate AI assistance from my own decisions. It shows what
+I asked AI to help with, what was useful and what I did not accept. For example,
+AI suggested several numerical probabilities without supporting data. I did
+not use them as real fraud probabilities; I kept any unsourced numbers clearly
+labelled as simulation assumptions.
 
 | Prompt / task | What was useful | What I rejected or corrected |
 |---|---|---|
